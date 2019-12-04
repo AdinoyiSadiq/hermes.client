@@ -1,0 +1,30 @@
+.btn {
+  text-transform: capitalize;
+  font-size: 1.8rem;
+  font-weight: 400;
+  border-radius: 10rem;
+  outline: 0;
+  border: none;
+  transition: all .2s;
+
+  &:hover:enabled {
+    transform: translateY(-.3rem);
+    box-shadow: 0 1rem 2rem rgba($color-black,.2);
+  }
+  
+  &:active:enabled {
+    transform: translateY(-.1rem);
+    box-shadow: 0 .5rem 1rem rgba($color-black,.2);
+  }
+  
+  &-orange {
+    background-color: $color-orange;
+    color: $color-white;
+    padding: 2.6rem 8.7rem;
+  }
+
+  &:disabled {
+    background-color: rgba($color-orange, .5);
+    cursor: not-allowed;
+  }
+}
