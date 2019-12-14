@@ -1,0 +1,105 @@
+.contact-profile {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  
+  &__image {
+    display: flex;
+    justify-content: center;
+    margin-top: 8rem;
+  }
+
+  &__name {
+    text-align: center;
+
+    &--username {
+      color: $color-black;
+      font-weight: 800;
+    }
+
+    &--username, &--userhandle {
+      font-size: 1.6rem;
+    }
+  }
+
+  &__details {
+    display: flex;
+    justify-content: space-between;
+    border-top: solid .1rem #E4E9EF;
+    padding: 1.7rem;
+
+    &--content {
+      color: $color-black;
+      font-size: 1.3rem;
+      font-weight: 800;
+    }
+  }
+
+  &__media {
+    border-top: solid .1rem #E4E9EF;
+    padding: 1.7rem;
+
+    &--label {
+      padding-bottom: .8rem;
+    }
+
+    &--content {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .shared__media {
+      width: 32%;
+    }
+  }
+
+  &__details--label, &__media--label {
+    font-size: 1.2rem;
+  }
+
+  &__language {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    flex: 1;
+
+    > div {
+      display: flex;
+      justify-content: space-between;
+      background-color: $color-white-1;
+      margin: 1.7rem;
+      padding: 1.6rem;
+      border-radius: .8rem;
+    }  
+
+    &--label {
+      color: $color-black;
+      font-weight: 800;
+      font-size: 1.4rem;
+    }
+
+    &--content {
+      font-size: 1.2rem;
+    }
+
+    &--container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    &--button {
+      background-color: $color-orange;
+      color: $color-white;
+      font-weight: 800;
+      padding: .6rem 1.5rem; 
+      border-radius: 10rem;
+    }
+  }
+}
+
+@media only screen and (max-width: $bp-large-1-5) {
+  .contact-profile {
+    display: none;
+  }
+}
