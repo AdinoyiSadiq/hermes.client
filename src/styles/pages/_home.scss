@@ -1,0 +1,33 @@
+html {
+  @media only screen and (max-width: $bp-large-3) {
+    font-size: 70%;
+  }
+
+  @media only screen and (max-width: $bp-large-2) {
+    font-size: 60%;
+  }
+
+  @media only screen and (max-width: $bp-large-1) {
+    width: 736px;
+  }
+}
+
+.home {
+  display: flex;
+  height: 100vh;
+
+  .chat-list {
+    background-color: $color-grey-dark-3;
+    flex: 0 0 35.4rem;
+  }
+
+  .messaging {
+    background-color: $color-white;
+    flex: 1;
+  }
+
+  .contact-profile {
+    background-color: $color-grey-dark-3;
+    flex: 0 0 35.5rem;
+  }
+}

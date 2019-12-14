@@ -9,7 +9,13 @@
 
 @import 'components/button';
 @import 'components/form';
+@import 'components/search';
+@import 'components/nav-button';
 
 @import 'layout/auth';
+@import 'layout/chat-list';
+@import 'layout/messaging';
+@import 'layout/contact-profile';
 
 @import 'pages/auth';
+@import 'pages/home';

@@ -9,7 +9,7 @@ import './styles/styles.scss';
 
 import Signup from './screens/Signup';
 import Signin from './screens/Signin';
-import Home from './screens/Home';
+import Home from './screens/HomeTest';
 import RequireAuth from './components/auth/requireAuth';
 import IS_AUTH_QUERY from './queries/isAuthenticated';
 
