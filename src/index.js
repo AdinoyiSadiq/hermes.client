@@ -9,7 +9,8 @@ import './styles/styles.scss';
 
 import Signup from './screens/Signup';
 import Signin from './screens/Signin';
-import Home from './screens/HomeTest';
+import Home from './screens/Home';
+import HomeTest from './screens/HomeTest';
 import RequireAuth from './components/auth/requireAuth';
 import IS_AUTH_QUERY from './queries/isAuthenticated';
 
@@ -43,6 +44,7 @@ const App = () => (
               <Route exact path='/signup' component={Signup}/>
               <Route exact path='/signin' component={Signin}/>
               <Route exact path='/home' component={RequireAuth(Home, isAuth)}/>
+              <Route exact path='/homeTest' component={RequireAuth(HomeTest, isAuth)}/>
           </Switch>
         )}
       </Query>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import profile__icon from '../images/profile-icon.svg';
-import contacts__icon from '../images/contacts-icon.svg';
+import contacts__icon from '../images/contactList-icon.svg';
 import search__icon from '../images/search-icon.svg';
 import search__icon__orange from '../images/search-icon--orange.svg';
 import user__avatar from '../images/user-avatar.svg';

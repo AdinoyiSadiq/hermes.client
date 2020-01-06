@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Mutation } from '@apollo/react-components';
 import FormInput from '../forms/FormInput';
 import SIGNUP_MUTATION from '../../mutations/signup';
-import Button from '../Button';
+import Button from '../buttons/Button';
 import validateAuth from '../../lib/validation';
 
 const fieldNames = ['firstname', 'lastname', 'username', 'location', 'email', 'password', 'confirmPassword'];
@@ -62,8 +62,10 @@ class SignupForm extends Component {
     this.changeTouchState(fieldNames, true);
     if (!validationError.status) {
       const res = await signup();
-      localStorage.setItem('authToken', res.token)
-      this.props.history.push('/home');
+      if (res && res.data && res.data.signup && res.data.signup.token) {
+        localStorage.setItem('authToken', res.data.signup.token)
+        this.props.history.push('/home');
+      }
     }
   }
 
