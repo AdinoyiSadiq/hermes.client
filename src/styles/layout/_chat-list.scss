@@ -36,7 +36,7 @@
         display: flex;
 
         > div:first-child {
-          padding-right: 2rem;
+          padding-right: 2rem; 
         }
 
         > div:first-child, div:nth-child(2) {
@@ -44,9 +44,13 @@
           flex-direction: column;
           justify-content: space-around;
         }
+        
+        &--activechat {
+          width: 21rem;
+        }
 
-        div:nth-child(2) {
-          align-items: flex-end;
+        &--contact {
+          width: 26rem;
         }
 
         &--name {
@@ -55,9 +59,14 @@
           color: $color-black;
         }
 
-        &--message {
+        &--message{
           font-size: 1.4rem;
           color: $color-black-2;
+        }
+
+        &--lastseen {
+          font-size: 1.3rem;
+          color: $color-grey-dark-4;
         }
 
         &--number {

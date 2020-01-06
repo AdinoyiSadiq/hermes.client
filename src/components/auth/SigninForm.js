@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLazyQuery } from '@apollo/react-hooks';
 import FormInput from '../forms/FormInput';
 import SIGNIN_QUERY from '../../queries/signin';
-import Button from '../Button';
+import Button from '../buttons/Button';
 import validateAuth from '../../lib/validation';
 
 const fieldNames = ['email', 'password'];
