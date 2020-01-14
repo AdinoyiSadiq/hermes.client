@@ -1,0 +1,53 @@
+.profile__input {
+  display: flex;
+  flex-direction: column;
+
+  > div:first-child, .u-error {
+    margin-left: 2.3rem;
+    font-size: 1.2rem;
+  }
+
+  > div:nth-child(2) {
+    display: flex;
+    flex-direction: row;
+  }
+
+  input {
+    width: 82%;
+    height: 4rem;
+    font: inherit;
+    font-size: 1.8rem;
+    background-color: inherit;
+    border: none;
+    outline: none;
+    border-bottom: solid .1rem $color-white-1;
+    margin-left: 2.3rem;
+  }
+
+  &--active input {
+    border-bottom: solid .1rem $color-orange;
+  }
+
+  &--error input {
+    border-bottom: solid .1rem $color-red;
+  }
+}
+
+.profile__button {
+  
+  &--container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    background-color: inherit;
+  }
+
+  &--tick, &--edit {
+    margin-left: 1rem;
+    height: 1.5rem;
+    width: 1.5rem;
+    cursor: pointer;
+  }
+}
+
