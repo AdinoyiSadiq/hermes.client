@@ -6,14 +6,13 @@ import SearchBox from '../components/search/SearchBox';
 import NavButton from '../components/buttons/NavButton';
 import UserList from './user/UserList';
 import UserProfile from './user/UserProfile';
+import Loader from '../components/loaders/Loader';
 
 import profile__icon from '../images/profile-icon.svg';
 
 import GET_ALL_CONTACTS from '../queries/getAllContacts';
 import GET_ACTIVE_CHATS from '../queries/getActiveChats';
 import SEARCH_CONTACTS from '../queries/searchContacts';
-
-
 
 const ChatList = () => {
   const [content, setContent] = useState('activeChats');
@@ -36,6 +35,8 @@ const ChatList = () => {
     const chatButton = (chatButtonState === 'activeChats') ? 'contactList': 'activeChats'
     return (
       <NavButton 
+        active={content && (content === 'activeChats' || content === 'contactList')}
+        toggle={true}
         setContentState={setContentState}
         content={chatButton}
         image={require(`../images/${chatButton}-icon.svg`)}
@@ -45,7 +46,6 @@ const ChatList = () => {
 
   // Note: check that error has message property
   if (error || contactsError || searchError) return `Error! ${error || contactsError.message || searchError.message}`;
-  console.log('values', data && data, contactsData && contactsData);
   return (
     <div className='chat-list'>
       <section className='header'>
@@ -60,6 +60,8 @@ const ChatList = () => {
         <div>
           { renderChatButton(chatButtonState) }
           <NavButton 
+            active={content && (content === 'userProfile')}
+            toggle={content && (content !== 'userProfile')}
             setContentState={setContentState}
             content='userProfile'
             image={profile__icon}
@@ -73,7 +75,11 @@ const ChatList = () => {
               searchContacts={searchContacts}
               setSearchState={setSearchState}/>
             {
-              (loading || contactsLoading || searchLoading) ? 'Loading...' : (
+              (loading || contactsLoading || searchLoading) ? (
+                <div className='u-center'>
+                  <Loader />
+                </div>
+              ) : (
                 <UserList
                   data={search ? searchData.searchContacts : content === 'activeChats' ? data.getActiveUsers : content  === 'contactList' ? contactsData.getAllContacts : null}
                   type={search ? 'search' : chatButtonState}

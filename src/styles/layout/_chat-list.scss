@@ -28,6 +28,10 @@
       display: flex;
       justify-content: center;
 
+      &:hover {
+        cursor: pointer;
+      }
+
       &__avatar {
         padding-right: 1rem;
       }
@@ -46,7 +50,7 @@
         }
         
         &--activechat {
-          width: 21rem;
+          width: 19.5rem;
         }
 
         &--contact {

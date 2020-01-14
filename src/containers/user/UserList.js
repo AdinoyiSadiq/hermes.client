@@ -1,6 +1,7 @@
 import React from 'react';
 
 import dateFormatter from '../../lib/dateFormatter';
+import MessaginContext from '../../context/Messaging';
 import user__avatar from '../../images/user-avatar.svg';
 
 const UserList = ({ type, data }) => {
@@ -32,10 +33,17 @@ const UserList = ({ type, data }) => {
 
   const User = ({ item: { user, lastMessage } }) => {
     return (
-      <div className='user u-margin-top-2'>
-        <img className='user__avatar' src={user__avatar} alt='user avatar' />
-        {renderUserDeatils({ type, user, lastMessage })}
-      </div>
+      <MessaginContext.Consumer>
+        {({ setActiveUser }) => (
+          <div 
+            className='user u-margin-top-2'
+            onClick={() => setActiveUser(user.id)}>
+            <img className='user__avatar' src={user__avatar} alt='user avatar' />
+            {renderUserDeatils({ type, user, lastMessage })}
+          </div>
+        )}
+      </MessaginContext.Consumer>
+
     );
   }
 

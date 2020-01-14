@@ -9,13 +9,16 @@
 
 @import 'components/button';
 @import 'components/form';
+@import 'components/profile-input';
 @import 'components/search';
 @import 'components/nav-button';
+@import 'components/loader';
 
 @import 'layout/auth';
 @import 'layout/chat-list';
 @import 'layout/messaging';
 @import 'layout/contact-profile';
+@import 'layout/user-profile';
 
 @import 'pages/auth';
 @import 'pages/home';
