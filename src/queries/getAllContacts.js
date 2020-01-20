@@ -5,6 +5,7 @@ export default gql`
     getAllContacts {
       id
       status
+      profileImage
       user {
         id
         firstname

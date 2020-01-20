@@ -23,17 +23,14 @@
   }
 
   .user-list {
-
+    overflow-y: auto;
+    
     .user {
       display: flex;
-      justify-content: center;
+      margin-left: 1.5rem;
 
       &:hover {
         cursor: pointer;
-      }
-
-      &__avatar {
-        padding-right: 1rem;
       }
 
       &__details {
@@ -50,7 +47,7 @@
         }
         
         &--activechat {
-          width: 19.5rem;
+          width: 22rem;
         }
 
         &--contact {

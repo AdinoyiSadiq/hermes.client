@@ -1,17 +1,17 @@
 import React from 'react';
 
+import UserImage from '../../components/profile/UserImage';
 import dateFormatter from '../../lib/dateFormatter';
 import MessaginContext from '../../context/Messaging';
-import user__avatar from '../../images/user-avatar.svg';
 
 const UserList = ({ type, data }) => {
-  const renderUserDeatils = ({ type, user, lastMessage }) => {
+  const renderUserDetails = ({ type, user, lastMessage }) => {
     if (type === 'activeChats') {
       return (
         <div className='user__details'>
           <div className='user__details--activechat'>
             <div className='user__details--name'>{`${user.firstname} ${user.lastname}`}</div>
-            <div className='user__details--message'>{lastMessage && lastMessage.text}</div>
+            <div className='user__details--message'>{`${(lastMessage && lastMessage.text).slice(0, 22)}...`}</div>
           </div>
           <div>
             <div className='user__details--number u-hide'>12</div>
@@ -31,23 +31,20 @@ const UserList = ({ type, data }) => {
     );
   }
 
-  const User = ({ item: { user, lastMessage } }) => {
+  const User = ({ item: { user, profileImage, lastMessage } }) => {
     return (
       <MessaginContext.Consumer>
         {({ setActiveUser }) => (
           <div 
             className='user u-margin-top-2'
-            onClick={() => setActiveUser(user.id)}>
-            <img className='user__avatar' src={user__avatar} alt='user avatar' />
-            {renderUserDeatils({ type, user, lastMessage })}
+            onClick={() => setActiveUser({ ...user, profileImage  })}>
+            <UserImage user={{ ...user, profileImage }}/>
+            {renderUserDetails({ type, user, lastMessage })}
           </div>
         )}
       </MessaginContext.Consumer>
-
     );
   }
-
-
 
   return (
     <section className='user-list'>
