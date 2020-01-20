@@ -1,0 +1,27 @@
+.user__avatar {
+  padding-right: 1rem;
+  
+  > img {
+    width: 5.6rem;
+    height: 5.6rem;
+    border-radius: 50%;
+  }
+
+  &--small img {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  &--placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $color-white;
+    background-color: $color-orange-light;
+    font-size: 1.8rem;
+    margin-right: 1rem;
+    width: 5.6rem;
+    height: 5.6rem;
+    border-radius: 50%;
+  }
+}

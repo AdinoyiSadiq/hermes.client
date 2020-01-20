@@ -1,6 +1,6 @@
 import React from 'react';
-import { render } from 'react-dom';
 import ApolloClient from 'apollo-boost';
+import { render } from 'react-dom';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { Query } from '@apollo/react-components';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
@@ -32,7 +32,9 @@ const client = new ApolloClient({
       isAuth: !!localStorage.getItem('authToken')
     }
   },
-  onError: (e) => { console.log(e) }
+  onError: (e) => { 
+    console.log(e) 
+  }
 });
 
 const App = () => (

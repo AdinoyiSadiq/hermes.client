@@ -4,6 +4,7 @@ export default gql`
   query GET_ACTIVE_CHATS {
     getActiveUsers {
       id
+      profileImage
       user {
         id
         firstname
