@@ -1,13 +1,13 @@
 import { gql } from 'apollo-boost';
 
 export default gql`
-  query GET_MESSAGES(
+  subscription MESSAGE_SUBSCRIPTION (
+    $senderId: Int! 
     $receiverId: Int!
-    $offset: Int
   ) {
-    getMessages(
-      receiverId: $receiverId 
-      offset: $offset
+    message(
+      senderId: $senderId,
+      receiverId: $receiverId
     ) {
       id
       text

@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 const dateFormatter = (dateString, type) => {
-  const date = moment(dateString, 'YYYY-MM-DD HH:mm:ss');
+  const date = moment(moment(parseInt(dateString)), 'YYYY-MM-DD HH:mm:ss');
   const dateDifference = moment().diff(date, 'days');
   const isSameDay = date.isSame(moment(), 'day');
   if (dateDifference > 6) {
@@ -18,7 +18,7 @@ const dateFormatter = (dateString, type) => {
 }; 
 
 export const timeFormatter = (dateString) => {
-  const date = moment(dateString, 'YYYY-MM-DD HH:mm:ss');
+  const date = moment(moment(parseInt(dateString)), 'YYYY-MM-DD HH:mm:ss');
   return date.format('HH:mm');
 }
 

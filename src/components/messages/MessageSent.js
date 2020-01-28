@@ -2,7 +2,7 @@ import React from 'react';
 import { timeFormatter } from '../../lib/dateFormatter';
 import message__status from '../../images/message-status.svg';
 
-const MessageSent = ({ messageDetails }) => {
+const MessageSent = ({ messageDetails, key }) => {
   return (
     <div className='message__sent'>
     <div>

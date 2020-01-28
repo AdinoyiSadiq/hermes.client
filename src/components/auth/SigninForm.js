@@ -54,7 +54,12 @@ const SigninForm = (props) => {
         name='password'
         placeholder='Password'
       />
-      {error && <div className='error-field error-bottom'>{error.graphQLErrors[0].message}</div>}
+      {
+        error && 
+        error.graphQLErrors && 
+        error.graphQLErrors[0].message && 
+        <div className='error-field error-bottom'>{error.graphQLErrors[0].message}</div>
+      }
       <Button
         type='submit'
         disabled={
