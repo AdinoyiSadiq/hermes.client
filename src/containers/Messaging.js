@@ -69,7 +69,7 @@ const Messaging = ({ user, authUserId }) => {
     <div className='messaging'>
       <MessageHeader 
         user={user} 
-        authUserId={authUserId}  
+        authUserId={authUserId}
       />
       <MessageList 
         refresh={refresh}
