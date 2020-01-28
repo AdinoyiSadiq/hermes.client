@@ -1,24 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useSubscription } from "@apollo/react-hooks";
 import UserImage from '../../components/profile/UserImage';
 import TYPING_SUBSCRIPTION from '../../subscriptions/typingSubscription';
 import search__icon__orange from '../../images/search-icon--orange.svg';
 
-const MessageHeader = ({ user, authUserId }) => {
-  const [isTyping, setIsTyping] = useState(false);
-  const { data } = useSubscription(
+const MessageHeader = ({ user, authUserId, refresh }) => {
+  const [isTyping, setIsTyping] = useState({ state: false, user: false });
+  useSubscription(
     TYPING_SUBSCRIPTION,
-    { variables: { senderId: user.id, receiverId: authUserId} }
+    { 
+      variables: { senderId: user.id, receiverId: authUserId },
+      onSubscriptionData: (res) => {
+        if (res.subscriptionData.data) {
+          setTypingState();
+        }
+      }
+    }
   );
 
-  useEffect(() => {
-    if (data) {
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-      }, 3000);
-    }
-  }, [data]);
+  const setTypingState = () => {
+    setIsTyping({ state: true, user: user.id });
+    setTimeout(() => {
+      setIsTyping(false);
+    }, 3000);
+  }
 
   return (
     <section className='header'>
@@ -26,7 +31,7 @@ const MessageHeader = ({ user, authUserId }) => {
         <UserImage user={user} size='small'/>
         <div className='user__details--name'>
           <div>{`${user.firstname} ${user.lastname}`}</div>
-          <div className='user__details--subtext'>{isTyping ? 'typing...' : ''}</div>
+          <div className='user__details--subtext'>{(isTyping.state && isTyping.user === user.id) ? 'typing...' : ''}</div>
         </div>
       </div>
       <div className='nav-button'>
