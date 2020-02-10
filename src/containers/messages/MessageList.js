@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import MessageSent from '../../components/messages/MessageSent';
 import MessageReceived from '../../components/messages/MessageReceived';
@@ -6,10 +6,45 @@ import Loader from '../../components/loaders/Loader';
 import checkDateDifference from '../../lib/checkDateDifference';
 import dateFormatter from '../../lib/dateFormatter';
 
-const MessageList = ({ authUserId, messages, loading, subscribeToNewMessages, refresh }) => {
+const MessageList = ({ 
+  authUserId, messages, loading, subscribeToNewMessages, subscribeToDeletedMessages, fetchMoreMessages, handleMessageToReply, refresh 
+  }) => {
+  const [showOptions, setShowOptions] = useState(false);
   useEffect(() => {
     subscribeToNewMessages();
+    subscribeToDeletedMessages();
   }, []);
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  });
+
+  const handleClickOutside = (event) => {
+    const { target } = event;
+    const targetClassButton = 'message__options--button';
+    const targetClassButtonShow = 'message__options--button message__options--button-show';
+    const targetClassButtonImage = 'message__options--button message__options--button-image';
+    const targetClassButtonImageShow = 'message__options--button message__options--button-image message__options--button-show';
+    const targetClassOption = 'message__option';
+    if (
+      target.className !== targetClassButton  && 
+      target.parentNode.className !== targetClassButton &&
+      target.parentNode.className !== targetClassOption &&
+      target.parentNode.className !== targetClassButtonImage &&
+      target.parentNode.className !== targetClassButtonImageShow &&
+      target.parentNode.className !== targetClassButtonShow &&
+      target.className !== targetClassOption
+      ) {
+      setShowOptions(false);
+    }
+  }
+
+  const setShowOptionsState = ({ messageId }) => {
+    setShowOptions({ state: !showOptions.state, messageId });
+  }
 
   const renderMessage = ({ message, showDate }) => {
     if ((message && message.sender && message.sender.id) === authUserId) {
@@ -22,8 +57,12 @@ const MessageList = ({ authUserId, messages, loading, subscribeToNewMessages, re
               </div>
             )
           }
-          <MessageSent 
-            messageDetails={message} />
+          <MessageSent
+            messageDetails={message}
+            showOptions={showOptions}
+            setShowOptionsState={setShowOptionsState}
+            fetchMoreMessages={fetchMoreMessages}
+            handleMessageToReply={handleMessageToReply} />
         </div>
       );
     } else {
@@ -37,7 +76,10 @@ const MessageList = ({ authUserId, messages, loading, subscribeToNewMessages, re
             )
           }
           <MessageReceived 
-            messageDetails={message} />
+            messageDetails={message}
+            showOptions={showOptions}
+            setShowOptionsState={setShowOptionsState}
+            handleMessageToReply={handleMessageToReply} />
         </div>
       );
     }

@@ -13,6 +13,7 @@ export default gql`
       }
       lastMessage {
         text
+        image
         createdAt
       }
     }

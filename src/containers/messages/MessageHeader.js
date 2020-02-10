@@ -4,7 +4,7 @@ import UserImage from '../../components/profile/UserImage';
 import TYPING_SUBSCRIPTION from '../../subscriptions/typingSubscription';
 import search__icon__orange from '../../images/search-icon--orange.svg';
 
-const MessageHeader = ({ user, authUserId, refresh }) => {
+const MessageHeader = ({ user, authUserId, refresh, setShowContact }) => {
   const [isTyping, setIsTyping] = useState({ state: false, user: false });
   useSubscription(
     TYPING_SUBSCRIPTION,
@@ -27,7 +27,7 @@ const MessageHeader = ({ user, authUserId, refresh }) => {
 
   return (
     <section className='header'>
-      <div className='user__details'>
+      <div className='user__details' onClick={() => setShowContact(true)}>
         <UserImage user={user} size='small'/>
         <div className='user__details--name'>
           <div>{`${user.firstname} ${user.lastname}`}</div>

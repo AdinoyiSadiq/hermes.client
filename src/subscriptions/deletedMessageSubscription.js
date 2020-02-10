@@ -1,15 +1,13 @@
 import { gql } from 'apollo-boost';
 
 export default gql`
-  query GET_MESSAGES(
+  subscription DELETED_MESSAGE_SUBSCRIPTION (
+    $senderId: Int! 
     $receiverId: Int!
-    $offset: Int
-    $limit: Int
   ) {
-    getMessages(
-      receiverId: $receiverId 
-      offset: $offset
-      limit: $limit
+    deletedMessage(
+      senderId: $senderId,
+      receiverId: $receiverId
     ) {
       id
       text
@@ -18,7 +16,6 @@ export default gql`
       quote {
         id
         text
-        image
         sender {
           id
           firstname

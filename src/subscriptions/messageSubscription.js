@@ -11,11 +11,23 @@ export default gql`
     ) {
       id
       text
+      image
       createdAt
       quote {
+        id
         text
+        sender {
+          id
+          firstname
+          lastname
+        }
       }
       sender {
+        id
+        firstname
+        lastname
+      }
+      receiver {
         id
       }
     }
