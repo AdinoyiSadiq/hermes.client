@@ -13,6 +13,7 @@ import GET_ALL_CONTACTS from '../queries/getAllContacts';
 import GET_ACTIVE_CHATS from '../queries/getActiveChats';
 import SEARCH_CONTACTS from '../queries/searchContacts';
 import MESSAGE_SUBSCRIPTION from '../subscriptions/messageSubscription';
+import DELETED_MESSAGE_SUBSCRIPTION from '../subscriptions/deletedMessageSubscription';
 
 const ChatList = ({ authUserId }) => {
   const [content, setContent] = useState('activeChats');
@@ -89,6 +90,15 @@ const ChatList = ({ authUserId }) => {
                   subscribeToNewMessages={({ senderId, receiverId}) => 
                     subscribeToMore({
                       document: MESSAGE_SUBSCRIPTION,
+                      variables: { senderId, receiverId },
+                      updateQuery: (prev, { subscriptionData }) => {
+                        refetch();
+                      }
+                    })
+                  }
+                  subscribeToDeletedMessages={({ senderId, receiverId}) => 
+                    subscribeToMore({
+                      document: DELETED_MESSAGE_SUBSCRIPTION,
                       variables: { senderId, receiverId },
                       updateQuery: (prev, { subscriptionData }) => {
                         refetch();

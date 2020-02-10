@@ -12,6 +12,11 @@
     height: 4rem;
   }
 
+  &--big img {
+    width: 16rem;
+    height: 16rem;
+  }
+
   &--placeholder {
     display: flex;
     justify-content: center;
@@ -23,5 +28,16 @@
     width: 5.6rem;
     height: 5.6rem;
     border-radius: 50%;
+  
+    &-small {
+      width: 4rem;
+      height: 4rem;
+    }
+
+    &-big {
+      width: 16rem;
+      height: 16rem;
+      font-size: 5rem;
+    }
   }
 }

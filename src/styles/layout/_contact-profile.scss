@@ -1,12 +1,20 @@
 .contact-profile {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    height: 7.2rem;
+    padding-left: 1.7rem;
+
+    &--close {
+      cursor: pointer;
+    }
+  }
   
   &__image {
     display: flex;
     justify-content: center;
-    margin-top: 8rem;
+    margin-top: 1rem;
   }
 
   &__name {

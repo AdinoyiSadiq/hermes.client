@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import UserItem from './UserItem';
 
-const UserList = ({ authUserId, type, data, subscribeToNewMessages }) => {
+const UserList = ({ authUserId, type, data, subscribeToNewMessages, subscribeToDeletedMessages }) => {
+  const [active, setActive] = useState(false);
   return (
-    <section className='user-list'>
+    <section className='user-list u-margin-top-1'>
       {
         (type === 'activeChats') ?  (
             data && data.sort((a, b) => b.lastMessage.createdAt - a.lastMessage.createdAt)
@@ -16,6 +17,9 @@ const UserList = ({ authUserId, type, data, subscribeToNewMessages }) => {
                 type={type}
                 authUserId={authUserId}
                 subscribeToNewMessages={subscribeToNewMessages}
+                subscribeToDeletedMessages={subscribeToDeletedMessages}
+                active={active}
+                setActive={setActive}
               />
             );
           })
@@ -26,6 +30,8 @@ const UserList = ({ authUserId, type, data, subscribeToNewMessages }) => {
                 key={item.id}
                 item={item}
                 type={type}
+                active={active}
+                setActive={setActive}
               />
             );
           })

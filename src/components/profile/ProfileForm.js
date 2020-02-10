@@ -69,7 +69,9 @@ const ProfileForm = (props) => {
     try {
       setApiError({});
       setUploadLoading(true);
-      const uploadRes = await imageUploader(event);
+      const file = event.target.files && event.target.files[0];
+      // Note: test for empty file 
+      const uploadRes = await imageUploader(file);
       if (uploadRes.data && uploadRes.data.secure_url) {
         const res = await updateProfile({ variables: { profileImage: uploadRes.data.secure_url } });
         if (res && res.data && res.data.updateProfile) {
