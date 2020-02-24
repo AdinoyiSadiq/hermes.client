@@ -14,6 +14,7 @@ const FormInput = (props) => {
         value={value}
         onChange={handleChange}
         onBlur={handleBlur}
+        autoComplete="off"
       />
       {
         error[name] && touched[name] ? 

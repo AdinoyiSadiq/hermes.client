@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import moment from 'moment';
 import MessageSent from '../../components/messages/MessageSent';
 import MessageReceived from '../../components/messages/MessageReceived';
@@ -7,13 +7,16 @@ import checkDateDifference from '../../lib/checkDateDifference';
 import dateFormatter from '../../lib/dateFormatter';
 
 const MessageList = ({ 
-  authUserId, messages, loading, subscribeToNewMessages, subscribeToDeletedMessages, fetchMoreMessages, handleMessageToReply, refresh 
+  userId, authUserId, messages, loading, subscribeToNewMessages, subscribeToDeletedMessages, subscribeToUpdatedMessages, fetchMoreMessages, handleMessageToReply, refresh 
   }) => {
+  const messageTimeRef = useRef();
+  const messageRefs = useRef([]);
   const [showOptions, setShowOptions] = useState(false);
   useEffect(() => {
     subscribeToNewMessages();
     subscribeToDeletedMessages();
-  }, []);
+    subscribeToUpdatedMessages();
+  }, [userId]);
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -21,6 +24,25 @@ const MessageList = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   });
+
+  useEffect(() => {
+    const options = {
+      root: null,
+      rootMargin: '0px',
+      threshold: [0.01, 0.98, 0.99, 1]
+    }
+    const observer = new IntersectionObserver(onChange, options);
+    let messages = [...document.getElementsByClassName('message')];
+    messages.length > 0 && messages.forEach(message => observer.observe(message));
+  })
+
+  function onChange(changes, observer) {
+    changes.forEach(change => {
+      if (change.intersectionRatio > 0 && change.boundingClientRect.top < 90) {
+        (messageTimeRef.current && !loading) && (messageTimeRef.current.innerHTML = dateFormatter(parseInt(change.target.id) , 'messages')); 
+      }
+  });
+}
 
   const handleClickOutside = (event) => {
     const { target } = event;
@@ -42,14 +64,21 @@ const MessageList = ({
     }
   }
 
-  const setShowOptionsState = ({ messageId }) => {
-    setShowOptions({ state: !showOptions.state, messageId });
+  const setShowOptionsState = ({ messageId, reverse }) => {
+    setShowOptions({ state: !showOptions.state, messageId, reverse });
+  }
+
+  const handleScrollToMessage = (messageId) => {
+    console.log(messageRefs.current[messageId]);
+    if (messageRefs.current[messageId]) {
+      messageRefs.current[messageId].scrollIntoView({ block: 'end' });
+    }
   }
 
   const renderMessage = ({ message, showDate }) => {
     if ((message && message.sender && message.sender.id) === authUserId) {
       return (
-        <div key={message.id}>
+        <div className='message' key={message.id} id={message.createdAt}>
           {
             showDate && (
               <div className='messages__date--container'>
@@ -58,16 +87,19 @@ const MessageList = ({
             )
           }
           <MessageSent
+            authUserId={authUserId}
             messageDetails={message}
             showOptions={showOptions}
             setShowOptionsState={setShowOptionsState}
             fetchMoreMessages={fetchMoreMessages}
-            handleMessageToReply={handleMessageToReply} />
+            handleMessageToReply={handleMessageToReply}
+            messageRefs={messageRefs}
+            handleScrollToMessage={handleScrollToMessage} />
         </div>
       );
     } else {
       return (
-        <div key={message.id}>
+        <div className='message' key={message.id} id={message.createdAt}>
           {
             showDate && (
               <div className='messages__date--container'>
@@ -76,10 +108,13 @@ const MessageList = ({
             )
           }
           <MessageReceived 
+            authUserId={authUserId}
             messageDetails={message}
             showOptions={showOptions}
             setShowOptionsState={setShowOptionsState}
-            handleMessageToReply={handleMessageToReply} />
+            handleMessageToReply={handleMessageToReply}
+            messageRefs={messageRefs}
+            handleScrollToMessage={handleScrollToMessage} />
         </div>
       );
     }
@@ -97,6 +132,9 @@ const MessageList = ({
 
   return (
     <section className='messages'>
+      <div className='messages__date--container messages__date--container-persistent'>
+        <div className='messages__date' ref={messageTimeRef} />
+      </div>
       {(!refresh && authUserId && messages) && renderMessageList(authUserId, messages)}
       {loading && (
         <div>

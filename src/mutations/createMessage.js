@@ -16,6 +16,7 @@ export default gql`
       id
       text
       image
+      state
       sender {
         id
         firstname

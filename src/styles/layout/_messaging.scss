@@ -3,6 +3,7 @@
   flex-direction: column;
   border: solid $color-white-1;
   border-width: 0 .1rem 0 .1rem;
+  position: relative;
 
   .header {
     min-height: 7.2rem;
@@ -57,11 +58,25 @@
       border-radius: 2rem;
       background-color: rgba($color-white-1, 0.9);
       color: $color-black-2;
+      z-index: 100;
+
+      &:empty {
+        display: none;
+      }
 
       &--container {
         display: flex;
         justify-content: center;
         margin: 1.2rem 0;
+      }
+
+      &--container-persistent {
+        position: absolute;
+        margin-left: auto;
+        margin-right: auto;
+        left: 0;
+        right: 0;
+        top: 7.1rem;
       }
     }
 
@@ -119,11 +134,13 @@
           &--quote {
             display: flex;
             background-color: $color-white;
-            padding: .5rem 1.5rem;
+            padding: .5rem;
+            padding-left: 1.5rem;
             margin-bottom: .5rem;
             border: .1rem solid $color-orange;
             border-right: .6rem solid $color-orange;
             border-radius: 2rem .2rem .2rem 2rem;
+            cursor: pointer;
 
             &-name {
               font-weight: 600;
@@ -199,7 +216,8 @@
             display: flex;
             flex-direction: row-reverse;
             background-color: $color-orange-light;
-            padding: .5rem 1.5rem;
+            padding: .5rem;
+            padding-right: 1.5rem;
             margin-bottom: .5rem;
             border: .1rem solid $color-orange;
             border-left: .6rem solid $color-orange;
@@ -207,7 +225,7 @@
 
             &-name {
               font-weight: 600;
-              color: $color-grey-dark-3;
+              color: $color-orange;
             }
 
             > div:nth-child(2) {
@@ -224,6 +242,10 @@
       &__received {
         .message__options {
           left: 3rem;
+
+          &--reverse {
+            top: -3rem;
+          }
         }
       }
 
@@ -274,6 +296,11 @@
         border-radius: .8rem;
         padding: .8rem 0;
         list-style-type: none;
+        z-index: 100;
+
+        &--reverse {
+          top: -6rem;
+        }
         
         li {
           display: flex;
@@ -348,12 +375,17 @@
 
       .nav-button {
         margin: 0 1rem; 
+
+        > img {
+          cursor: pointer;
+        }
       }
 
       .nav-button__container {
         padding: 1.3rem .2rem;
         background-color: rgba($color-orange, .08);
         border-radius: 0 10rem 10rem 0;
+
       }
 
       input {
@@ -434,4 +466,9 @@
       }
     }
   }
+}
+
+aside.emoji-picker-react {
+  width: 100% !important;
+  box-shadow: none !important;
 }

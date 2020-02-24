@@ -12,6 +12,7 @@ export default gql`
       id
       text
       image
+      state
       createdAt
       quote {
         id

@@ -10,7 +10,7 @@ import message__send__icon from '../images/message-send-icon.svg';
 import emoji__icon from '../images/emoji-icon.svg';
 import reply__icon from '../images/reply-icon.svg';
 import close__icon from '../images/close-icon.svg';
-import message__status from '../images/message-status.svg';
+import message__status from '../images/message-status-orange.svg';
 import shared__image__1 from '../images/shared-image-1.svg';
 import shared__image__2 from '../images/shared-image-2.svg';
 import shared__image__3 from '../images/shared-image-3.svg';

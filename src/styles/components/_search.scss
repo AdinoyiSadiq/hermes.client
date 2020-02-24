@@ -4,19 +4,28 @@
   display: flex;
   align-items: center;
 
-  .search__button {
+  &__button {
     padding: 1.65rem 2.5rem;
     border-radius: 10rem 0 0 10rem;
     background-color: rgba($color-orange, .08);
     border: none;
   }
 
-  .search__box {
+  &__box {
     border-radius: 0 10rem 10rem 0;
     padding-left: .1rem;
 
     &:focus {
       box-shadow: none;
     }
+  }
+
+  &__list--empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 3rem;
+    font-family: inherit;
+    font-size: 1.4rem;
   }
 }
