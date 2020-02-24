@@ -3,17 +3,20 @@ import { gql } from 'apollo-boost';
 export default gql`
   query GET_MESSAGES(
     $receiverId: Int!
-    $offset: Int
+    $cursor: String
     $limit: Int
+    $position: String
   ) {
     getMessages(
       receiverId: $receiverId 
-      offset: $offset
+      cursor: $cursor
       limit: $limit
+      position: $position
     ) {
       id
       text
       image
+      state
       createdAt
       quote {
         id
@@ -24,6 +27,7 @@ export default gql`
           firstname
           lastname
         }
+        createdAt
       }
       sender {
         id

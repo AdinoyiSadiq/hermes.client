@@ -1,16 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useQuery } from '@apollo/react-hooks';
+import React, { useState, useEffect, useRef } from 'react';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import MessageList from './messages/MessageList';
 import MessageInput from './messages/MessageInput';
 import MessageHeader from './messages/MessageHeader';
 import GET_MESSAGES from '../queries/getMessages';
+import UPDATE_MESSAGE from '../mutations/updateMessage';
 import MESSAGE_SUBSCRIPTION from '../subscriptions/messageSubscription';
 import DELETED_MESSAGE_SUBSCRIPTION from '../subscriptions/deletedMessageSubscription';
+import UPDATED_MESSAGE_SUBSCRIPTION from '../subscriptions/updatedMessageSubscription';
 
-const Messaging = ({ user, authUserId, setShowContact, sendImage }) => {
+const Messaging = ({ user, authUserId, setShowContact, sendImage, uploadingImage }) => {
+  const prevMessageSub = useRef();
+  const prevDeleteMessageSub = useRef();
+  const prevUpdateMessageSub = useRef();
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const [messageToReply, setMessageToReply] = useState('');
   const [refresh, setRefresh] = useState(false);
+
+  const [updateMessages] = useMutation(UPDATE_MESSAGE);
   const { loading: messagesLoading, error: messagesError, data: messagesData, fetchMore, subscribeToMore } = useQuery(GET_MESSAGES, { 
     variables: { receiverId: user.id },
     notifyOnNetworkStatusChange: true,
@@ -24,6 +31,20 @@ const Messaging = ({ user, authUserId, setShowContact, sendImage }) => {
   }, [user.id]);
 
   useEffect(() => {
+    if (messagesData && messagesData.getMessages) {
+      const messageIds = []
+      messagesData.getMessages.forEach(message => {
+        if ((message.sender.id !== authUserId) && (message.state !== 'delivered')) {
+          messageIds.push(message.id);
+        }
+      });
+      if (messageIds.length) {
+          updateMessages({ variables: { state: 'delivered', messageIds: messageIds } });
+      }
+    }
+  }, [messagesData])
+
+  useEffect(() => {
     const messagesComponent = document.getElementsByClassName('messages')[0];
     if (messagesComponent) {
       messagesComponent.addEventListener("scroll", handleScroll, false);
@@ -35,7 +56,10 @@ const Messaging = ({ user, authUserId, setShowContact, sendImage }) => {
   });
 
   const subscribeToNewMessages = () => {
-    subscribeToMore && subscribeToMore({
+    if (prevMessageSub.current) {
+      prevMessageSub.current();
+    }
+    prevMessageSub.current = subscribeToMore({
       document: MESSAGE_SUBSCRIPTION,
       variables: { 
         senderId: user.id,
@@ -55,7 +79,10 @@ const Messaging = ({ user, authUserId, setShowContact, sendImage }) => {
   const subscribeToDeletedMessages = () => {
     // Create a subscription that only works one way specifically for the messaging section, 
     // leave the active chats as is
-    subscribeToMore && subscribeToMore({
+    if (prevDeleteMessageSub.current) {
+      prevDeleteMessageSub.current();
+    }
+    prevDeleteMessageSub.current = subscribeToMore({
       document: DELETED_MESSAGE_SUBSCRIPTION,
       variables: { 
         senderId: user.id,
@@ -72,7 +99,20 @@ const Messaging = ({ user, authUserId, setShowContact, sendImage }) => {
     });
   }
 
-  const setScrollPosition = (reset) => {
+  const subscribeToUpdatedMessages = () => {
+    if (prevUpdateMessageSub.current) {
+      prevUpdateMessageSub.current();
+    }
+    prevUpdateMessageSub.current = subscribeToMore({
+      document: UPDATED_MESSAGE_SUBSCRIPTION,
+      variables: { 
+        senderId: authUserId,
+        receiverId: user.id
+      },
+    });
+  }
+
+  const setScrollPosition = () => {
     const messagesComponent = document.getElementsByClassName('messages')[0];       
     const scrollHeight = messagesComponent.scrollHeight;
     setTimeout(() => {
@@ -81,11 +121,10 @@ const Messaging = ({ user, authUserId, setShowContact, sendImage }) => {
   }
 
   const fetchMoreMessages = (limit) => {
-    // Note: refactor offset pagination
     fetchMore({
       variables: {
         receiverId: user.id,
-        offset: messagesData.getMessages.length,
+        cursor: messagesData.getMessages[messagesData.getMessages.length - 1].createdAt,
         limit: limit || 15,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
@@ -93,9 +132,10 @@ const Messaging = ({ user, authUserId, setShowContact, sendImage }) => {
         if (fetchMoreResult.getMessages.length < (limit || 15)) {
           setHasMoreMessages(false);
         }
+        const updatedMessages = [...prev.getMessages, ...fetchMoreResult.getMessages]
         return {
           ...prev,
-          getMessages: [...prev.getMessages, ...fetchMoreResult.getMessages]
+          getMessages: updatedMessages
         }
       }
     });
@@ -114,21 +154,23 @@ const Messaging = ({ user, authUserId, setShowContact, sendImage }) => {
     setMessageToReply(message);
   }
 
-  
   return (
     <div className='messaging'>
       <MessageHeader 
         user={user} 
         authUserId={authUserId}
         setShowContact={setShowContact}
+        uploadingImage={uploadingImage}
       />
       <MessageList 
         refresh={refresh}
+        userId={user.id}
         authUserId={authUserId} 
         messages={messagesData && messagesData.getMessages} 
         loading={messagesLoading} 
         subscribeToNewMessages={subscribeToNewMessages}
         subscribeToDeletedMessages={subscribeToDeletedMessages}
+        subscribeToUpdatedMessages={subscribeToUpdatedMessages}
         fetchMoreMessages={fetchMoreMessages}
         handleMessageToReply={handleMessageToReply}
       />

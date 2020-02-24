@@ -6,6 +6,7 @@ const optimisticResponseMessage = (authUserId, user, message, messageToReply) =>
       id: Math.floor(Math.random() * 1000000000),
       text: message,
       image: '',
+      state: '',
       createdAt: Date.now(),
       quote: messageToReply ? [{ 
         id: messageToReply.id, 

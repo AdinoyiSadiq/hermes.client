@@ -7,7 +7,7 @@ import MessaginContext from '../../context/Messaging';
 import camera__icon from '../../images/camera-icon.svg';
 
 const UserItem = ({ 
-    item: { user, profileImage, lastMessage }, 
+    item: { user, profileImage, lastMessage, unreadMessages }, 
     type, 
     authUserId, 
     subscribeToNewMessages, 
@@ -30,11 +30,13 @@ const UserItem = ({
             <div className='user__details--name'>{`${user.firstname} ${user.lastname}`}</div>
             <div className='user__details--message'>
               {lastMessage.image && <img src={camera__icon} alt="camera"/>}
-              {`${(lastMessage && lastMessage.text).slice(0, 22)}...`}
+              {(lastMessage && lastMessage.text) && `${(lastMessage.text).slice(0, 22)}${(lastMessage.text.length > 22) ? '...' : ''}`}
             </div>
           </div>
           <div>
-            <div className='user__details--number u-hide'>12</div>
+            <div className={`user__details--number ${(unreadMessages === 0 || (active && active.userId && active.userId === user.id)) && 'u-hide'}`}>
+              {`${unreadMessages}`}
+            </div>
             <div className='user__details--time'>{dateFormatter(lastMessage.createdAt)}</div>
           </div>
         </div>

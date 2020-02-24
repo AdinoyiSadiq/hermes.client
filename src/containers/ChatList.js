@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useLazyQuery } from '@apollo/react-hooks';
 
 import SearchBox from '../components/search/SearchBox';
@@ -80,6 +80,8 @@ const ChatList = ({ authUserId }) => {
                 <div className='u-center'>
                   <Loader />
                 </div>
+              ) : (search && searchData && searchData.searchContacts.length === 0) ? (
+                <div className='search__list--empty'>No contacts were found</div>
               ) : (
                 <UserList
                   authUserId={authUserId}

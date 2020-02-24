@@ -3,6 +3,7 @@ import { useQuery, useLazyQuery, useMutation } from '@apollo/react-hooks';
 import ChatList from '../containers/ChatList';
 import Messaging from '../containers/Messaging';
 import ContactProfile from '../containers/ContactProfile';
+import Loader from '../components/loaders/Loader';
 import MessaginContext from '../context/Messaging';
 import imageUploader from '../lib/imageUploader';
 import GET_AUTH_USER from '../queries/getAuthUser';
@@ -15,6 +16,7 @@ const Home = (props) => {
   const [isActive, setIsActive] = useState(false);
   const [showContact, setShowContact] = useState(false);
   const [isActiveUser, setIsActiveUser] = useState({});
+  const [uploadingImage, setUploadingImage] = useState({});
   const { loading: authUserLoading, error: authUserError, data: authUserData } = useQuery(GET_AUTH_USER);
   const [getContactProfile, { loading: contactLoading, error: contactError, data: contactData }] = useLazyQuery(GET_CONTACT_PROFILE);
   const [createMessage, { loading, error, data }] = useMutation(CREATE_MESSAGE);
@@ -26,10 +28,12 @@ const Home = (props) => {
   }
 
   const sendImage = async ({ variables, imageFile }) => {
+    setUploadingImage({ state: true, receiverId: variables.receiverId });
     try { 
       const uploadRes = await imageUploader(imageFile);
       if (uploadRes.data && uploadRes.data.secure_url) {
         variables.image = uploadRes.data.secure_url;
+        setUploadingImage({});
         createMessage({ 
           variables,
           update: (cache, { data: { createMessage } }) => {
@@ -71,7 +75,9 @@ const Home = (props) => {
         />
       </MessaginContext.Provider>
       { authUserLoading ? (
-        <div>Loading...</div>
+        <div className='u-center'>
+          <Loader />
+        </div>
       ) : isActive ? (
           <Fragment>
             <Messaging 
@@ -79,6 +85,7 @@ const Home = (props) => {
               authUserId={authUserData && authUserData.getAuthUser && authUserData.getAuthUser.id}
               setShowContact={setShowContact}
               sendImage={sendImage}
+              uploadingImage={uploadingImage}
             />
             {
               showContact && (

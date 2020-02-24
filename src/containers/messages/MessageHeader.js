@@ -4,7 +4,7 @@ import UserImage from '../../components/profile/UserImage';
 import TYPING_SUBSCRIPTION from '../../subscriptions/typingSubscription';
 import search__icon__orange from '../../images/search-icon--orange.svg';
 
-const MessageHeader = ({ user, authUserId, refresh, setShowContact }) => {
+const MessageHeader = ({ user, authUserId, setShowContact, uploadingImage }) => {
   const [isTyping, setIsTyping] = useState({ state: false, user: false });
   useSubscription(
     TYPING_SUBSCRIPTION,
@@ -26,17 +26,22 @@ const MessageHeader = ({ user, authUserId, refresh, setShowContact }) => {
   }
 
   return (
-    <section className='header'>
-      <div className='user__details' onClick={() => setShowContact(true)}>
-        <UserImage user={user} size='small'/>
-        <div className='user__details--name'>
-          <div>{`${user.firstname} ${user.lastname}`}</div>
-          <div className='user__details--subtext'>{(isTyping.state && isTyping.user === user.id) ? 'typing...' : ''}</div>
+    <section>
+      <div className='header'>
+        <div className='user__details' onClick={() => setShowContact(true)}>
+          <UserImage user={user} size='small'/>
+          <div className='user__details--name'>
+            <div>{`${user.firstname} ${user.lastname}`}</div>
+            <div className='user__details--subtext'>{(isTyping.state && isTyping.user === user.id) ? 'typing...' : ''}</div>
+          </div>
+        </div>
+        <div className='nav-button u-hide'>
+          <img src={search__icon__orange} alt='search'/>
         </div>
       </div>
-      <div className='nav-button'>
-        <img src={search__icon__orange} alt='search'/>
-      </div>
+      {(uploadingImage.state && uploadingImage.receiverId === user.id) && (
+        <div class="loader-bar" />
+      )}
     </section>
   );
 }
