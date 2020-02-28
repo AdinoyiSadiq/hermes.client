@@ -7,7 +7,7 @@ const UserImage = ({ user, size }) => {
     </div>
   ) : (
     <div className={`user__avatar--placeholder ${ size && `user__avatar--placeholder-${size}`}`}>
-      {`${user.firstname && user.firstname.charAt(0)}${user.lastname && user.lastname.charAt(0)}`}
+      {`${user.firstname && user.firstname.charAt(0).toUpperCase()}${user.lastname && user.lastname.charAt(0).toUpperCase()}`}
     </div>
   ); 
 }

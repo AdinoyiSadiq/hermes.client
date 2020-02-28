@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 
 import UserImage from '../../components/profile/UserImage';
 import dateFormatter from '../../lib/dateFormatter';
+import formatText from '../../lib/formatText';
 import MessaginContext from '../../context/Messaging';
 
 import camera__icon from '../../images/camera-icon.svg';
@@ -12,7 +13,6 @@ const UserItem = ({
     authUserId, 
     subscribeToNewMessages, 
     subscribeToDeletedMessages,
-    active,
     setActive,
   }) => {
   useEffect(() => {
@@ -22,19 +22,19 @@ const UserItem = ({
     subscribeToDeletedMessages({ senderId: user.id, receiverId: authUserId });
   }, []);
 
-  const renderUserDetails = ({ type, user, lastMessage }) => {
+  const renderUserDetails = ({ type, user, lastMessage, isActiveUser }) => {
     if (type === 'activeChats') {
       return (
         <div className='user__details'>
           <div className='user__details--activechat'>
-            <div className='user__details--name'>{`${user.firstname} ${user.lastname}`}</div>
+            <div className='user__details--name'>{`${formatText(user.firstname)} ${formatText(user.lastname)}`}</div>
             <div className='user__details--message'>
               {lastMessage.image && <img src={camera__icon} alt="camera"/>}
               {(lastMessage && lastMessage.text) && `${(lastMessage.text).slice(0, 22)}${(lastMessage.text.length > 22) ? '...' : ''}`}
             </div>
           </div>
           <div>
-            <div className={`user__details--number ${(unreadMessages === 0 || (active && active.userId && active.userId === user.id)) && 'u-hide'}`}>
+            <div className={`user__details--number ${(unreadMessages === 0 || (isActiveUser && isActiveUser.id && isActiveUser.id === user.id)) && 'u-hide'}`}>
               {`${unreadMessages}`}
             </div>
             <div className='user__details--time'>{dateFormatter(lastMessage.createdAt)}</div>
@@ -46,7 +46,7 @@ const UserItem = ({
     return (
       <div className='user__details'>
         <div className='user__details--contact'>
-          <div className='user__details--name'>{`${user.firstname} ${user.lastname}`}</div>
+          <div className='user__details--name'>{`${formatText(user.firstname)} ${formatText(user.lastname)}`}</div>
           <div className='user__details--lastseen'>Last seen: {dateFormatter(user.lastseen)}</div>
         </div>
       </div>
@@ -55,15 +55,12 @@ const UserItem = ({
 
   return (
     <MessaginContext.Consumer>
-      {({ setActiveUser }) => (
+      {({ setActiveUser, isActiveUser }) => (
         <div 
-          className={`user ${(active && active.userId && active.userId === user.id) && `user__details--active`}`}
-          onClick={() => {
-            setActiveUser({ ...user, profileImage  });
-            setActive({ userId: user.id });
-          }}>
+          className={`user ${(isActiveUser && isActiveUser.id && isActiveUser.id === user.id) && `user__details--active`}`}
+          onClick={() => { setActiveUser({ ...user, profileImage  }) }}>
           <UserImage user={{ ...user, profileImage }}/>
-          {renderUserDetails({ type, user, lastMessage })}
+          {renderUserDetails({ type, user, lastMessage, isActiveUser })}
         </div>
       )}
     </MessaginContext.Consumer>

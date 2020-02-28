@@ -7,7 +7,7 @@ import checkDateDifference from '../../lib/checkDateDifference';
 import dateFormatter from '../../lib/dateFormatter';
 
 const MessageList = ({ 
-  userId, authUserId, messages, loading, subscribeToNewMessages, subscribeToDeletedMessages, subscribeToUpdatedMessages, fetchMoreMessages, handleMessageToReply, refresh 
+  userId, authUserId, messages, loading, subscribeToNewMessages, subscribeToDeletedMessages, subscribeToUpdatedMessages, fetchMoreMessages, handleMessageToReply, refresh, history 
   }) => {
   const messageTimeRef = useRef();
   const messageRefs = useRef([]);
@@ -69,7 +69,6 @@ const MessageList = ({
   }
 
   const handleScrollToMessage = (messageId) => {
-    console.log(messageRefs.current[messageId]);
     if (messageRefs.current[messageId]) {
       messageRefs.current[messageId].scrollIntoView({ block: 'end' });
     }
@@ -94,7 +93,8 @@ const MessageList = ({
             fetchMoreMessages={fetchMoreMessages}
             handleMessageToReply={handleMessageToReply}
             messageRefs={messageRefs}
-            handleScrollToMessage={handleScrollToMessage} />
+            handleScrollToMessage={handleScrollToMessage}
+            history={history} />
         </div>
       );
     } else {

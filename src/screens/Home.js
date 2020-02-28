@@ -6,6 +6,8 @@ import ContactProfile from '../containers/ContactProfile';
 import Loader from '../components/loaders/Loader';
 import MessaginContext from '../context/Messaging';
 import imageUploader from '../lib/imageUploader';
+import newActiveUserResponseMessage from '../lib/newActiveUserResponse';
+import errorHandler from '../lib/errorHandler';
 import GET_AUTH_USER from '../queries/getAuthUser';
 import GET_CONTACT_PROFILE from '../queries/getContactProfile';
 import GET_MESSAGES from '../queries/getMessages';
@@ -17,7 +19,7 @@ const Home = (props) => {
   const [showContact, setShowContact] = useState(false);
   const [isActiveUser, setIsActiveUser] = useState({});
   const [uploadingImage, setUploadingImage] = useState({});
-  const { loading: authUserLoading, error: authUserError, data: authUserData } = useQuery(GET_AUTH_USER);
+  const { loading: authUserLoading, error: authUserError, data: authUserData, client } = useQuery(GET_AUTH_USER);
   const [getContactProfile, { loading: contactLoading, error: contactError, data: contactData }] = useLazyQuery(GET_CONTACT_PROFILE);
   const [createMessage, { loading, error, data }] = useMutation(CREATE_MESSAGE);
 
@@ -33,79 +35,103 @@ const Home = (props) => {
       const uploadRes = await imageUploader(imageFile);
       if (uploadRes.data && uploadRes.data.secure_url) {
         variables.image = uploadRes.data.secure_url;
+        variables.text = variables.text.trim();
         setUploadingImage({});
         createMessage({ 
           variables,
           update: (cache, { data: { createMessage } }) => {
             const activeUsers = cache.readQuery({ query: GET_ACTIVE_CHATS });
-            const updatedActiveUsersList = (activeUsers.getActiveUsers).map((activeUser) => {
-              if (activeUser.user.id === isActiveUser.id) {
-                activeUser.lastMessage.text = createMessage.text;
-                activeUser.lastMessage.image = createMessage.image;
-                activeUser.lastMessage.createdAt = createMessage.createdAt;
-              }
-              return activeUser;
-            });
+            const existingActiveUser = activeUsers && 
+                                    activeUsers.getActiveUsers && 
+                                    (activeUsers.getActiveUsers).find((activeUser) => activeUser.user.id === isActiveUser.id);
             const data = cache.readQuery({ 
               query: GET_MESSAGES,
               variables: { receiverId: isActiveUser.id },
-            });
+            }); 
             cache.writeQuery({ 
               query: GET_MESSAGES, 
               variables: { receiverId: isActiveUser.id },
               data: { getMessages: [createMessage, ...data.getMessages] }
             });
-            cache.writeQuery({
-              query: GET_ACTIVE_CHATS, 
-              data: { getActiveUsers: [...updatedActiveUsersList] }
-            });
+            if (!existingActiveUser) {
+              const newActiveUser = {...(newActiveUserResponseMessage(isActiveUser, createMessage))}
+              cache.writeQuery({
+                query: GET_ACTIVE_CHATS, 
+                data: { getActiveUsers: [newActiveUser, ...activeUsers.getActiveUsers] }
+              });
+            } else {
+              const updatedActiveUsersList = (activeUsers.getActiveUsers).map((activeUser) => {
+                if (activeUser.user.id === isActiveUser.id) {
+                  activeUser.lastMessage.text = createMessage.text;
+                  activeUser.lastMessage.image = createMessage.image;
+                  activeUser.lastMessage.createdAt = createMessage.createdAt;
+                }
+                return activeUser;
+              });
+              cache.writeQuery({
+                query: GET_ACTIVE_CHATS, 
+                data: { getActiveUsers: [...updatedActiveUsersList] }
+              });
+            }
           }
         });
       }
     } catch (error) {
-      console.log('This is an error');
+      const { history } = props;
+      errorHandler(error, client, history);
     }
+  }
+
+  if (error || authUserError || contactError) {
+    const { history } = props;
+    errorHandler(authUserError, client, history);
   }
 
   return (
     <div className='home'>
-      <MessaginContext.Provider value={{ setActiveUser }}>
-        <ChatList 
-          authUserId={authUserData && authUserData.getAuthUser && authUserData.getAuthUser.id}
-        />
-      </MessaginContext.Provider>
-      { authUserLoading ? (
-        <div className='u-center'>
-          <Loader />
-        </div>
-      ) : isActive ? (
+      {
+        (authUserLoading || authUserError) ? (
+          <div className='u-center'>
+            <Loader />
+          </div>
+        ) : (
           <Fragment>
-            <Messaging 
-              user={isActiveUser}
-              authUserId={authUserData && authUserData.getAuthUser && authUserData.getAuthUser.id}
-              setShowContact={setShowContact}
-              sendImage={sendImage}
-              uploadingImage={uploadingImage}
-            />
-            {
-              showContact && (
-                <ContactProfile 
-                  user={isActiveUser}
-                  contactProfile={contactData}
-                  loading={contactLoading}
-                  error={contactError}
-                  setShowContact={setShowContact}
-                />
+            <MessaginContext.Provider value={{ setActiveUser, isActiveUser }}>
+              <ChatList 
+                authUserId={authUserData && authUserData.getAuthUser && authUserData.getAuthUser.id}
+                history={props.history}
+              />
+            </MessaginContext.Provider>
+            { isActive ? (
+                <Fragment>
+                  <Messaging 
+                    user={isActiveUser}
+                    authUserId={authUserData && authUserData.getAuthUser && authUserData.getAuthUser.id}
+                    setShowContact={setShowContact}
+                    sendImage={sendImage}
+                    uploadingImage={uploadingImage}
+                    history={props.history}
+                  />
+                  {
+                    showContact && (
+                      <ContactProfile 
+                        user={isActiveUser}
+                        contactProfile={contactData}
+                        loading={contactLoading}
+                        setShowContact={setShowContact}
+                      />
+                    )
+                  }
+                </Fragment>
+              ) : (
+                <div>
+                  Sync Your Phone
+                </div>
               )
             }
           </Fragment>
-        ) : (
-          <div>
-            Sync Your Phone
-          </div>
         )
       }
-
     </div>
   );
 }

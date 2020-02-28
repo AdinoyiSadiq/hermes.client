@@ -5,13 +5,11 @@ export default gql`
     $receiverId: Int!
     $cursor: String
     $limit: Int
-    $position: String
   ) {
     getMessages(
       receiverId: $receiverId 
       cursor: $cursor
       limit: $limit
-      position: $position
     ) {
       id
       text
