@@ -6,6 +6,7 @@ import NavButton from '../components/buttons/NavButton';
 import UserList from './user/UserList';
 import UserProfile from './user/UserProfile';
 import Loader from '../components/loaders/Loader';
+import errorHandler from '../lib/errorHandler';
 
 import profile__icon from '../images/profile-icon.svg';
 
@@ -15,11 +16,11 @@ import SEARCH_CONTACTS from '../queries/searchContacts';
 import MESSAGE_SUBSCRIPTION from '../subscriptions/messageSubscription';
 import DELETED_MESSAGE_SUBSCRIPTION from '../subscriptions/deletedMessageSubscription';
 
-const ChatList = ({ authUserId }) => {
+const ChatList = ({ authUserId, history }) => {
   const [content, setContent] = useState('activeChats');
   const [search, setSearchState] = useState("");
   const [chatButtonState, setChatButtonState] = useState('activeChats');
-  const { loading, error, data, subscribeToMore, refetch } = useQuery(GET_ACTIVE_CHATS);
+  const { loading, error, data, subscribeToMore, refetch, client } = useQuery(GET_ACTIVE_CHATS);
   const [getAllContacts, { loading: contactsLoading, error: contactsError, data: contactsData }] = useLazyQuery(GET_ALL_CONTACTS);
   const [searchContacts, { loading: searchLoading, error: searchError, data: searchData }] = useLazyQuery(SEARCH_CONTACTS);
 
@@ -46,7 +47,10 @@ const ChatList = ({ authUserId }) => {
   }
 
   // Note: check that error has message property
-  if (error || contactsError || searchError) return `Error! ${error || contactsError.message || searchError.message}`;
+  if (error || contactsError || searchError) {
+    errorHandler((error || contactsError || searchError), client, history);
+    return `Error! ${error || contactsError.message || searchError.message}`;
+  }
   return (
     <div className='chat-list'>
       <section className='header'>
@@ -70,7 +74,7 @@ const ChatList = ({ authUserId }) => {
         </div>
       </section>
       {
-        content === 'userProfile' ?  <UserProfile /> : (
+        content === 'userProfile' ?  <UserProfile history={history}/> : (
           <div>
             <SearchBox 
               searchContacts={searchContacts}

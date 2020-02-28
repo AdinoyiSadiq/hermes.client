@@ -1,14 +1,15 @@
 import React, { Fragment } from 'react';
-import { useQuery } from '@apollo/react-hooks';
+// import { useQuery } from '@apollo/react-hooks';
 import UserImage from '../components/profile/UserImage';
 import Loader from '../components/loaders/Loader';
-import GET_CONTACT_PROFILE from '../queries/getContactProfile';
+import formatText from '../lib/formatText';
+// import GET_CONTACT_PROFILE from '../queries/getContactProfile';
 import close__icon from '../images/close-icon.svg';
 
-const ContactProfile = ({ user, setShowContact }) => {
-  const { loading, error, data } = useQuery(GET_CONTACT_PROFILE, { 
-    variables: { userId: user.id },
-  });
+const ContactProfile = ({ user, loading, contactProfile, setShowContact }) => {
+  // const { loading, error, data } = useQuery(GET_CONTACT_PROFILE, { 
+  //   variables: { userId: user.id },
+  // });
   
   return (
     <div className='contact-profile'>
@@ -31,17 +32,17 @@ const ContactProfile = ({ user, setShowContact }) => {
               <UserImage user={user} size='big'/>
             </div>
             <div className='contact-profile__name u-margin-top-3 u-margin-bottom-3'>
-              <div className='contact-profile__name--username'>{`${data.getProfile.firstname} ${data.getProfile.lastname}`}</div>
-              <div className='contact-profile__name--userhandle'>{`@${data.getProfile.username}`}</div>
+              <div className='contact-profile__name--username'>{`${formatText(contactProfile.getProfile.firstname)} ${formatText(contactProfile.getProfile.lastname)}`}</div>
+              <div className='contact-profile__name--userhandle'>{`@${contactProfile.getProfile.username}`}</div>
             </div>
             
             <div className='contact-profile__details'>
               <div className='contact-profile__details--label'>Email Address</div>
-              <div className='contact-profile__details--content'>{data.getProfile.email}</div>
+              <div className='contact-profile__details--content'>{contactProfile.getProfile.email}</div>
             </div>
             <div className='contact-profile__details'>
               <div className='contact-profile__details--label'>Location</div>
-              <div className='contact-profile__details--content'>{data.getProfile.location}</div>
+              <div className='contact-profile__details--content'>{formatText(contactProfile.getProfile.location)}</div>
             </div>
           </Fragment>
         )

@@ -3,13 +3,14 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 import MessageList from './messages/MessageList';
 import MessageInput from './messages/MessageInput';
 import MessageHeader from './messages/MessageHeader';
+import errorHandler from '../lib/errorHandler';
 import GET_MESSAGES from '../queries/getMessages';
 import UPDATE_MESSAGE from '../mutations/updateMessage';
 import MESSAGE_SUBSCRIPTION from '../subscriptions/messageSubscription';
 import DELETED_MESSAGE_SUBSCRIPTION from '../subscriptions/deletedMessageSubscription';
 import UPDATED_MESSAGE_SUBSCRIPTION from '../subscriptions/updatedMessageSubscription';
 
-const Messaging = ({ user, authUserId, setShowContact, sendImage, uploadingImage }) => {
+const Messaging = ({ user, authUserId, setShowContact, sendImage, uploadingImage, history }) => {
   const prevMessageSub = useRef();
   const prevDeleteMessageSub = useRef();
   const prevUpdateMessageSub = useRef();
@@ -18,7 +19,7 @@ const Messaging = ({ user, authUserId, setShowContact, sendImage, uploadingImage
   const [refresh, setRefresh] = useState(false);
 
   const [updateMessages] = useMutation(UPDATE_MESSAGE);
-  const { loading: messagesLoading, error: messagesError, data: messagesData, fetchMore, subscribeToMore } = useQuery(GET_MESSAGES, { 
+  const { loading: messagesLoading, error: messagesError, data: messagesData, fetchMore, subscribeToMore, client } = useQuery(GET_MESSAGES, { 
     variables: { receiverId: user.id },
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'network-only'
@@ -154,6 +155,10 @@ const Messaging = ({ user, authUserId, setShowContact, sendImage, uploadingImage
     setMessageToReply(message);
   }
 
+  if (messagesError) {
+    errorHandler(messagesError, client, history);
+  }
+
   return (
     <div className='messaging'>
       <MessageHeader 
@@ -173,6 +178,7 @@ const Messaging = ({ user, authUserId, setShowContact, sendImage, uploadingImage
         subscribeToUpdatedMessages={subscribeToUpdatedMessages}
         fetchMoreMessages={fetchMoreMessages}
         handleMessageToReply={handleMessageToReply}
+        history={history}
       />
       <MessageInput 
         user={user}
@@ -180,6 +186,7 @@ const Messaging = ({ user, authUserId, setShowContact, sendImage, uploadingImage
         messageToReply={messageToReply} 
         handleMessageToReply={handleMessageToReply}
         sendImage={sendImage}
+        history={history}
         />
     </div>
   );

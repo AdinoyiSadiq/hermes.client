@@ -5,6 +5,7 @@ import ProfileInput from '../../components/forms/ProfileInput';
 import UPDATE_PROFILE from '../../mutations/updateProfile';
 import validateAuth from '../../lib/validation';
 import imageUploader from '../../lib/imageUploader';
+import formatText from '../../lib/formatText';
 import update__image__icon from '../../images/update-image.svg';
 
 const ProfileForm = (props) => {
@@ -99,7 +100,7 @@ const ProfileForm = (props) => {
                       inputValue.profileImage ? 
                       <img className='profile__image' src={inputValue.profileImage} alt='profile'/> : 
                       <div className='profile__image--placeholder'>
-                        {`${profile.firstname && profile.firstname.charAt(0)}${profile.lastname && profile.lastname.charAt(0)}`}
+                        {`${profile.firstname && profile.firstname.charAt(0).toUpperCase()}${profile.lastname && profile.lastname.charAt(0).toUpperCase()}`}
                       </div>
                     }
                     <input 
@@ -131,7 +132,7 @@ const ProfileForm = (props) => {
             <ProfileInput 
               name='firstname'
               placeholder='First name'
-              value={inputValue.firstname}
+              value={formatText(inputValue.firstname)}
               touched={touchedInput.firstname}
               loading={loading}
               error={error}
@@ -149,7 +150,7 @@ const ProfileForm = (props) => {
             <ProfileInput
               name='lastname' 
               placeholder='Last name'
-              value={inputValue.lastname}
+              value={formatText(inputValue.lastname)}
               touched={touchedInput.lastname}
               loading={loading}
               error={error}

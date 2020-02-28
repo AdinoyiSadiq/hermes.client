@@ -3,6 +3,8 @@ import { useMutation } from '@apollo/react-hooks';
 import Picker from 'emoji-picker-react';
 import MessageInputModifier from '../../components/messages/MessageInputModifier';
 import optimisticResponseMessage from '../../lib/optimisticResponse';
+import newActiveUserResponseMessage from '../../lib/newActiveUserResponse';
+import errorHandler from '../../lib/errorHandler';
 import CREATE_MESSAGE from '../../mutations/createMessage';
 import USER_TYPING from '../../mutations/userTyping';
 import GET_MESSAGES from '../../queries/getMessages';
@@ -13,14 +15,14 @@ import message__send__icon from '../../images/message-send-icon.svg';
 import emoji__icon from '../../images/emoji-icon.svg';
 
 // Note: user should not be able to send empty messages, backend and frontend
-const MessagingInput = ({ user, authUserId, messageToReply, handleMessageToReply, sendImage }) => {
+const MessagingInput = ({ user, authUserId, messageToReply, handleMessageToReply, sendImage, history }) => {
   const [message, setMessage] = useState('');
   const [caption, setCaption] = useState('');
   const [image, setImage] = useState({});
   const [emoji, setEmoji] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [callTypingAPI, setCallTypingAPI] = useState(true);
-  const [createMessage, { loading, error, data }] = useMutation(CREATE_MESSAGE);
+  const [createMessage, { loading, error, data, client }] = useMutation(CREATE_MESSAGE);
   const [userTyping] = useMutation(USER_TYPING);
 
   useEffect(() => {
@@ -62,40 +64,54 @@ const MessagingInput = ({ user, authUserId, messageToReply, handleMessageToReply
       sendImage({ variables, imageFile: file });
       clearImage();
     } else {
-      const variables = { text: message, receiverId: user.id };
-      messageToReply && (variables.quoteId = messageToReply.id);
-      createMessage({ 
-        variables,
-        optimisticResponse: {
-          ...(optimisticResponseMessage(authUserId, user, message, messageToReply))
-        },
-        update: (cache, { data: { createMessage } }) => {
-          const activeUsers = cache.readQuery({ query: GET_ACTIVE_CHATS });
-          const updatedActiveUsersList = (activeUsers.getActiveUsers).map((activeUser) => {
-            if (activeUser.user.id === user.id) {
-              activeUser.lastMessage.text = createMessage.text;
-              activeUser.lastMessage.createdAt = createMessage.createdAt;
-              activeUser.lastMessage.image = null;
+      if (message && message.trim()) {
+        const variables = { text: message.trim(), receiverId: user.id };
+        messageToReply && (variables.quoteId = messageToReply.id);
+        createMessage({ 
+          variables,
+          optimisticResponse: {
+            ...(optimisticResponseMessage(authUserId, user, message, messageToReply))
+          },
+          update: (cache, { data: { createMessage } }) => {
+            const activeUsers = cache.readQuery({ query: GET_ACTIVE_CHATS });
+            const existingActiveUser = activeUsers && 
+                                      activeUsers.getActiveUsers && 
+                                      (activeUsers.getActiveUsers).find((activeUser) => activeUser.user.id === user.id);
+
+            const data = cache.readQuery({ 
+              query: GET_MESSAGES,
+              variables: {
+                receiverId: user.id,
+              },
+            });
+            cache.writeQuery({ 
+              query: GET_MESSAGES, 
+              variables: { receiverId: user.id },
+              data: { getMessages: [createMessage, ...data.getMessages] }
+            });
+            if (!existingActiveUser) {
+              const newActiveUser = {...(newActiveUserResponseMessage(user, createMessage))}
+              cache.writeQuery({
+                query: GET_ACTIVE_CHATS, 
+                data: { getActiveUsers: [newActiveUser, ...activeUsers.getActiveUsers] }
+              });
+            } else {
+              const updatedActiveUsersList = (activeUsers.getActiveUsers).map((activeUser) => {
+                if (activeUser.user.id === user.id) {
+                  activeUser.lastMessage.text = createMessage.text;
+                  activeUser.lastMessage.createdAt = createMessage.createdAt;
+                  activeUser.lastMessage.image = null;
+                }
+                return activeUser;
+              });
+              cache.writeQuery({
+                query: GET_ACTIVE_CHATS, 
+                data: { getActiveUsers: [...updatedActiveUsersList] }
+              });
             }
-            return activeUser;
-          });
-          const data = cache.readQuery({ 
-            query: GET_MESSAGES,
-            variables: {
-              receiverId: user.id,
-            },
-          });
-          cache.writeQuery({ 
-            query: GET_MESSAGES, 
-            variables: { receiverId: user.id },
-            data: { getMessages: [createMessage, ...data.getMessages] }
-          });
-          cache.writeQuery({
-            query: GET_ACTIVE_CHATS, 
-            data: { getActiveUsers: [...updatedActiveUsersList] }
-          });
-        }
-      });
+          }
+        });
+      }
     }
   }
 
@@ -128,6 +144,10 @@ const MessagingInput = ({ user, authUserId, messageToReply, handleMessageToReply
       reader.readAsDataURL(event.nativeEvent.target.files[0]);
       event.target.value = '';
     }
+  }
+
+  if (error) {
+    errorHandler(error, client, history);
   }
 
   return (

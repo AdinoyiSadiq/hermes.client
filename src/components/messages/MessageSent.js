@@ -1,6 +1,7 @@
-import React, { Fragment, useRef } from 'react';
+import React, { Fragment } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import { timeFormatter } from '../../lib/dateFormatter';
+import errorHandler from '../../lib/errorHandler';
 import DELETE_MESSAGE from '../../mutations/deleteMessage';
 import GET_MESSAGES from '../../queries/getMessages';
 import message__status__orange from '../../images/message-status-orange.svg';
@@ -10,9 +11,9 @@ import delete__button__icon from '../../images/delete-button-icon.svg';
 import reply__button__icon from '../../images/reply-button-icon.svg';
 
 const MessageSent = ({ 
-  authUserId,messageDetails, showOptions, setShowOptionsState, fetchMoreMessages, handleMessageToReply, messageRefs, handleScrollToMessage
+  authUserId,messageDetails, showOptions, setShowOptionsState, fetchMoreMessages, handleMessageToReply, messageRefs, handleScrollToMessage, history
   }) => { 
-  const [deleteMessage, { loading, error, data }] = useMutation(DELETE_MESSAGE);
+  const [deleteMessage, { loading, error, data, client }] = useMutation(DELETE_MESSAGE);
 
   const handleDeleteMessage = () => {
     deleteMessage({
@@ -87,6 +88,10 @@ const MessageSent = ({
           )}
       </div>
     );
+  }
+
+  if (error) {
+    errorHandler(error, client, history)
   }
 
   return (
