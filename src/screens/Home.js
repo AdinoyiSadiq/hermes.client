@@ -125,7 +125,6 @@ const Home = (props) => {
                 </Fragment>
               ) : (
                 <div>
-                  Sync Your Phone
                 </div>
               )
             }
