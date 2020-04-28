@@ -1,33 +1,35 @@
 import React, { useState } from 'react';
-import { useQuery, useLazyQuery } from '@apollo/react-hooks';
+import { useLazyQuery } from '@apollo/react-hooks';
 
-import SearchBox from '../components/search/SearchBox';
 import NavButton from '../components/buttons/NavButton';
-import UserList from './user/UserList';
+import UserListWrapper from './user/UserListWrapper';
 import UserProfile from './user/UserProfile';
-import Loader from '../components/loaders/Loader';
-import errorHandler from '../lib/errorHandler';
 
 import profile__icon from '../images/profile-icon.svg';
 
 import GET_ALL_CONTACTS from '../queries/getAllContacts';
-import GET_ACTIVE_CHATS from '../queries/getActiveChats';
-import SEARCH_CONTACTS from '../queries/searchContacts';
-import MESSAGE_SUBSCRIPTION from '../subscriptions/messageSubscription';
-import DELETED_MESSAGE_SUBSCRIPTION from '../subscriptions/deletedMessageSubscription';
+import GET_SENT_CONTACT_REQUESTS from '../queries/getSentContactRequests';
+import GET_RECEIVED_CONTACT_REQUESTS from '../queries/getReceivedContactRequests';
+import GET_REJECTED_CONTACT_REQUESTS from '../queries/getRejectedContactRequests';
 
 const ChatList = ({ authUserId, history }) => {
   const [content, setContent] = useState('activeChats');
   const [search, setSearchState] = useState("");
   const [chatButtonState, setChatButtonState] = useState('activeChats');
-  const { loading, error, data, subscribeToMore, refetch, client } = useQuery(GET_ACTIVE_CHATS);
-  const [getAllContacts, { loading: contactsLoading, error: contactsError, data: contactsData }] = useLazyQuery(GET_ALL_CONTACTS);
-  const [searchContacts, { loading: searchLoading, error: searchError, data: searchData }] = useLazyQuery(SEARCH_CONTACTS);
+  const [getAllContacts, contactsResults] = useLazyQuery(GET_ALL_CONTACTS);
+  const [getSentContactRequests, contactSentRequestResults] = useLazyQuery(GET_SENT_CONTACT_REQUESTS);
+  const [getReceivedContactRequests, contactReceivedRequestResults] = useLazyQuery(GET_RECEIVED_CONTACT_REQUESTS);
+  const [getRejectedContactRequests, contactRejectedRequestResults] = useLazyQuery(GET_REJECTED_CONTACT_REQUESTS);
 
   const setContentState = (content) => {
     setSearchState(false);
     setContent(content);
-    content === 'contactList' && getAllContacts();
+    if (content === 'contactList') {
+      getAllContacts();
+      getSentContactRequests();
+      getReceivedContactRequests();
+      getRejectedContactRequests();
+    }
     if (content === 'contactList' || content === 'activeChats') {
       setChatButtonState(content)
     }
@@ -46,11 +48,6 @@ const ChatList = ({ authUserId, history }) => {
     );
   }
 
-  // Note: check that error has message property
-  if (error || contactsError || searchError) {
-    errorHandler((error || contactsError || searchError), client, history);
-    return `Error! ${error || contactsError.message || searchError.message}`;
-  }
   return (
     <div className='chat-list'>
       <section className='header'>
@@ -74,48 +71,19 @@ const ChatList = ({ authUserId, history }) => {
         </div>
       </section>
       {
-        content === 'userProfile' ?  <UserProfile history={history}/> : (
-          <div>
-            <SearchBox 
-              searchContacts={searchContacts}
-              setSearchState={setSearchState}/>
-            {
-              (loading || contactsLoading || searchLoading) ? (
-                <div className='u-center'>
-                  <Loader />
-                </div>
-              ) : (search && searchData && searchData.searchContacts.length === 0) ? (
-                <div className='search__list--empty'>No contacts were found</div>
-              ) : (
-                <UserList
-                  authUserId={authUserId}
-                  data={search ? searchData.searchContacts : 
-                    (content === 'activeChats' && data) ? data.getActiveUsers : 
-                    content  === 'contactList' ? contactsData.getAllContacts : null}
-                    type={search ? 'search' : chatButtonState}
-                  subscribeToNewMessages={({ senderId, receiverId}) => 
-                    subscribeToMore({
-                      document: MESSAGE_SUBSCRIPTION,
-                      variables: { senderId, receiverId },
-                      updateQuery: (prev, { subscriptionData }) => {
-                        refetch();
-                      }
-                    })
-                  }
-                  subscribeToDeletedMessages={({ senderId, receiverId}) => 
-                    subscribeToMore({
-                      document: DELETED_MESSAGE_SUBSCRIPTION,
-                      variables: { senderId, receiverId },
-                      updateQuery: (prev, { subscriptionData }) => {
-                        refetch();
-                      }
-                    })
-                  }
-                />
-              )
-            }
-          </div>
-        )
+        content === 'userProfile' ?  <UserProfile history={history}/> : 
+        <UserListWrapper 
+          authUserId={authUserId}
+          content={content}
+          search={search}
+          chatButtonState={chatButtonState}
+          setSearchState={setSearchState}
+          contactsResults={contactsResults}
+          contactSentRequestResults={contactSentRequestResults}
+          contactReceivedRequestResults={contactReceivedRequestResults}
+          contactRejectedRequestResults={contactRejectedRequestResults}
+          history={history}
+        />
       }
     </div>
   );

@@ -12,6 +12,7 @@ import Signin from './screens/Signin';
 import Home from './screens/Home';
 import HomeTest from './screens/HomeTest';
 import RequireAuth from './components/auth/requireAuth';
+import Authenticated from './components/auth/isAuthenticated';
 import IS_AUTH_QUERY from './queries/isAuthenticated';
 
 const App = () => (
@@ -20,8 +21,8 @@ const App = () => (
       <Query query={IS_AUTH_QUERY}>
         {({ data: { isAuth } }) => (
             <Switch>
-              <Route exact path='/signup' component={Signup}/>
-              <Route exact path='/signin' component={Signin}/>
+              <Route exact path='(/|/signup)' component={Authenticated(Signup, isAuth)}/>
+              <Route exact path='/signin' component={Authenticated(Signin, isAuth)}/>
               <Route exact path='/home' component={RequireAuth(Home, isAuth)}/>
               <Route exact path='/homeTest' component={RequireAuth(HomeTest, isAuth)}/>
           </Switch>

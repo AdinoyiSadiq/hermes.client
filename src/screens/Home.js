@@ -1,8 +1,9 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { useQuery, useLazyQuery, useMutation } from '@apollo/react-hooks';
 import ChatList from '../containers/ChatList';
 import Messaging from '../containers/Messaging';
 import ContactProfile from '../containers/ContactProfile';
+import RestrictedContact from '../containers/RestrictedContact';
 import Loader from '../components/loaders/Loader';
 import MessaginContext from '../context/Messaging';
 import imageUploader from '../lib/imageUploader';
@@ -15,6 +16,7 @@ import GET_ACTIVE_CHATS  from '../queries/getActiveChats';
 import CREATE_MESSAGE from '../mutations/createMessage';
 
 const Home = (props) => {
+  const [messageLoading, setMessageLoading] = useState(false)
   const [isActive, setIsActive] = useState(false);
   const [showContact, setShowContact] = useState(false);
   const [isActiveUser, setIsActiveUser] = useState({});
@@ -22,6 +24,11 @@ const Home = (props) => {
   const { loading: authUserLoading, error: authUserError, data: authUserData, client } = useQuery(GET_AUTH_USER);
   const [getContactProfile, { loading: contactLoading, error: contactError, data: contactData }] = useLazyQuery(GET_CONTACT_PROFILE);
   const [createMessage, { loading, error, data }] = useMutation(CREATE_MESSAGE);
+
+  useEffect(() => {
+    setMessageLoading(true);
+    setTimeout(() => { setMessageLoading(false) }, 100);
+  }, [isActiveUser.updated]);
 
   const setActiveUser = (user) => {
     setIsActive(true);
@@ -102,7 +109,12 @@ const Home = (props) => {
                 history={props.history}
               />
             </MessaginContext.Provider>
-            { isActive ? (
+            { messageLoading ? (
+                <div className='u-center'>
+                  <Loader />
+                </div>
+            ) : isActive && isActiveUser && 
+              (isActiveUser.status === 1 || (isActiveUser.contact && isActiveUser.contact.status === 1) || isActiveUser.updated) ? (
                 <Fragment>
                   <Messaging 
                     user={isActiveUser}
@@ -123,10 +135,15 @@ const Home = (props) => {
                     )
                   }
                 </Fragment>
-              ) : (
-                <div>
-                </div>
-              )
+              ) : isActive && 
+              isActiveUser && 
+              (isActiveUser.status !== 1 || (isActiveUser.contact && isActiveUser.contact.status !== 1)) ? (
+                <RestrictedContact 
+                  user={isActiveUser}
+                  updateUser={setIsActiveUser}
+                  authUserId={authUserData && authUserData.getAuthUser && authUserData.getAuthUser.id}
+                />
+              ) : <div />
             }
           </Fragment>
         )

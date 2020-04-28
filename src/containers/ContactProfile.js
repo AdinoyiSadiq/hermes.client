@@ -1,16 +1,10 @@
 import React, { Fragment } from 'react';
-// import { useQuery } from '@apollo/react-hooks';
 import UserImage from '../components/profile/UserImage';
 import Loader from '../components/loaders/Loader';
 import formatText from '../lib/formatText';
-// import GET_CONTACT_PROFILE from '../queries/getContactProfile';
 import close__icon from '../images/close-icon.svg';
 
-const ContactProfile = ({ user, loading, contactProfile, setShowContact }) => {
-  // const { loading, error, data } = useQuery(GET_CONTACT_PROFILE, { 
-  //   variables: { userId: user.id },
-  // });
-  
+const ContactProfile = ({ user, loading, contactProfile, setShowContact }) => {  
   return (
     <div className='contact-profile'>
       {
@@ -28,7 +22,6 @@ const ContactProfile = ({ user, loading, contactProfile, setShowContact }) => {
               </div>
             </div>
             <div className='contact-profile__image'>
-              {/* <img className='user__avatar' src={user__avatar__large} alt='user avatar' /> */}
               <UserImage user={user} size='big'/>
             </div>
             <div className='contact-profile__name u-margin-top-3 u-margin-bottom-3'>

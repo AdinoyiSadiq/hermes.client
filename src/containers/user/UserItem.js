@@ -8,7 +8,7 @@ import MessaginContext from '../../context/Messaging';
 import camera__icon from '../../images/camera-icon.svg';
 
 const UserItem = ({ 
-    item: { user, profileImage, lastMessage, unreadMessages }, 
+    item: { user, status, actionUserId, contact, profileImage, lastMessage, unreadMessages }, 
     type, 
     authUserId, 
     subscribeToNewMessages, 
@@ -58,7 +58,7 @@ const UserItem = ({
       {({ setActiveUser, isActiveUser }) => (
         <div 
           className={`user ${(isActiveUser && isActiveUser.id && isActiveUser.id === user.id) && `user__details--active`}`}
-          onClick={() => { setActiveUser({ ...user, profileImage  }) }}>
+          onClick={() => { setActiveUser({ ...user, status, actionUserId, contact, profileImage  }) }}>
           <UserImage user={{ ...user, profileImage }}/>
           {renderUserDetails({ type, user, lastMessage, isActiveUser })}
         </div>

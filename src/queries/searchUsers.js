@@ -1,17 +1,20 @@
 import { gql } from 'apollo-boost';
 
 export default gql`
-  query GET_ALL_CONTACTS {
-    getAllContacts {
-      id
-      status
+  query SEARCH_USERS (
+    $searchTerm: String!
+  ) {
+    searchUsers(searchTerm: $searchTerm) {
       profileImage
-      actionUserId
       user {
         id
         firstname
         lastname
         lastseen
+      }
+      contact {
+        status
+        actionUserId
       }
     }
   }
