@@ -1,8 +1,8 @@
 import { gql } from 'apollo-boost';
 
 export default gql`
-  query GET_ALL_CONTACTS {
-    getAllContacts {
+  query GET_RECEIVED_CONTACT_REQUESTS {
+    getReceivedContactRequests {
       id
       status
       profileImage

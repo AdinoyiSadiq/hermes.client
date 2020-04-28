@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import search__icon from '../../images/search-icon.svg';
 
-const SearchBox = ({ searchContacts, setSearchState }) => {
+const SearchBox = ({ content, searchContacts, searchUsers, setSearchState }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const doneTypingInterval = 500;
   let typingTimer;
 
 
   const handleSearch = () => {
+    content === 'contactList' && searchUsers({ variables: { searchTerm } });
     searchContacts({ variables: { searchTerm } });
     setSearchState(true)
   }

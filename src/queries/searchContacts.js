@@ -7,6 +7,7 @@ export default gql`
     searchContacts(searchTerm: $searchTerm) {
       id
       status
+      profileImage
       user {
         id
         firstname

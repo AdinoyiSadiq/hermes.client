@@ -63,7 +63,7 @@ class SignupForm extends Component {
     if (!validationError.status) {
       const res = await signup();
       if (res && res.data && res.data.signup && res.data.signup.token) {
-        localStorage.setItem('authToken', res.data.signup.token)
+        localStorage.setItem('authToken', res.data.signup.token);
         this.props.history.push('/home');
       }
     }
