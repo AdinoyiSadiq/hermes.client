@@ -5,7 +5,7 @@ import Messaging from '../containers/Messaging';
 import ContactProfile from '../containers/ContactProfile';
 import RestrictedContact from '../containers/RestrictedContact';
 import Loader from '../components/loaders/Loader';
-import MessaginContext from '../context/Messaging';
+import MessagingContext from '../context/Messaging';
 import imageUploader from '../lib/imageUploader';
 import newActiveUserResponseMessage from '../lib/newActiveUserResponse';
 import errorHandler from '../lib/errorHandler';
@@ -33,6 +33,7 @@ const Home = (props) => {
   const setActiveUser = (user) => {
     setIsActive(true);
     setIsActiveUser({ ...user });
+    localStorage.setItem('active', JSON.stringify(user));
     getContactProfile({ variables: { userId: user.id } });
   }
 
@@ -103,18 +104,18 @@ const Home = (props) => {
           </div>
         ) : (
           <Fragment>
-            <MessaginContext.Provider value={{ setActiveUser, isActiveUser }}>
+            <MessagingContext.Provider value={{ setActiveUser, isActiveUser }}>
               <ChatList 
                 authUserId={authUserData && authUserData.getAuthUser && authUserData.getAuthUser.id}
                 history={props.history}
               />
-            </MessaginContext.Provider>
+            </MessagingContext.Provider>
             { messageLoading ? (
                 <div className='u-center'>
                   <Loader />
                 </div>
             ) : isActive && isActiveUser && 
-              (isActiveUser.status === 1 || (isActiveUser.contact && isActiveUser.contact.status === 1) || isActiveUser.updated) ? (
+              (isActiveUser.status === 1 || (isActiveUser.contact && isActiveUser.contact.status === 1) || isActiveUser.updated || isActiveUser.active) ? (
                 <Fragment>
                   <Messaging 
                     user={isActiveUser}

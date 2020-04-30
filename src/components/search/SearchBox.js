@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import search__icon from '../../images/search-icon.svg';
 
 const SearchBox = ({ content, searchContacts, searchUsers, setSearchState }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const doneTypingInterval = 500;
   let typingTimer;
+
+  useEffect(() => {
+    setSearchTerm("");
+  }, [content]);
 
 
   const handleSearch = () => {
@@ -33,6 +37,7 @@ const SearchBox = ({ content, searchContacts, searchUsers, setSearchState }) => 
       </label>
       <input 
         className='form__input search__box' 
+        value={searchTerm}
         type='text' 
         placeholder='Search...' 
         name='search' 

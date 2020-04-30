@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import UserImage from '../../components/profile/UserImage';
 import dateFormatter from '../../lib/dateFormatter';
 import formatText from '../../lib/formatText';
-import MessaginContext from '../../context/Messaging';
+import MessagingContext from '../../context/Messaging';
 
 import camera__icon from '../../images/camera-icon.svg';
 
@@ -13,13 +13,17 @@ const UserItem = ({
     authUserId, 
     subscribeToNewMessages, 
     subscribeToDeletedMessages,
-    setActive,
+    subscribeToAcceptedContacts,
+    active
   }) => {
   useEffect(() => {
     subscribeToNewMessages && 
     subscribeToNewMessages({ senderId: user.id, receiverId: authUserId });
     subscribeToDeletedMessages && 
     subscribeToDeletedMessages({ senderId: user.id, receiverId: authUserId });
+    !contact && 
+    (actionUserId === authUserId) && 
+    subscribeToAcceptedContacts && subscribeToAcceptedContacts({ requesterId: actionUserId, receiverId: user.id });
   }, []);
 
   const renderUserDetails = ({ type, user, lastMessage, isActiveUser }) => {
@@ -54,16 +58,16 @@ const UserItem = ({
   }
 
   return (
-    <MessaginContext.Consumer>
+    <MessagingContext.Consumer>
       {({ setActiveUser, isActiveUser }) => (
         <div 
           className={`user ${(isActiveUser && isActiveUser.id && isActiveUser.id === user.id) && `user__details--active`}`}
-          onClick={() => { setActiveUser({ ...user, status, actionUserId, contact, profileImage  }) }}>
+          onClick={() => { setActiveUser({ ...user, status, actionUserId, contact, profileImage, active  }) }}>
           <UserImage user={{ ...user, profileImage }}/>
           {renderUserDetails({ type, user, lastMessage, isActiveUser })}
         </div>
       )}
-    </MessaginContext.Consumer>
+    </MessagingContext.Consumer>
   );
 }
 

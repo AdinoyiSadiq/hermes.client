@@ -4,6 +4,7 @@ import { useLazyQuery } from '@apollo/react-hooks';
 import NavButton from '../components/buttons/NavButton';
 import UserListWrapper from './user/UserListWrapper';
 import UserProfile from './user/UserProfile';
+import MessagingContext from '../context/Messaging';
 
 import profile__icon from '../images/profile-icon.svg';
 
@@ -72,18 +73,23 @@ const ChatList = ({ authUserId, history }) => {
       </section>
       {
         content === 'userProfile' ?  <UserProfile history={history}/> : 
-        <UserListWrapper 
-          authUserId={authUserId}
-          content={content}
-          search={search}
-          chatButtonState={chatButtonState}
-          setSearchState={setSearchState}
-          contactsResults={contactsResults}
-          contactSentRequestResults={contactSentRequestResults}
-          contactReceivedRequestResults={contactReceivedRequestResults}
-          contactRejectedRequestResults={contactRejectedRequestResults}
-          history={history}
-        />
+        <MessagingContext.Consumer>
+        {({ setActiveUser }) => (
+          <UserListWrapper 
+            authUserId={authUserId}
+            content={content}
+            search={search}
+            chatButtonState={chatButtonState}
+            setSearchState={setSearchState}
+            contactsResults={contactsResults}
+            contactSentRequestResults={contactSentRequestResults}
+            contactReceivedRequestResults={contactReceivedRequestResults}
+            contactRejectedRequestResults={contactRejectedRequestResults}
+            history={history}
+            setActiveUser={setActiveUser}
+          />
+        )}
+        </MessagingContext.Consumer>
       }
     </div>
   );
