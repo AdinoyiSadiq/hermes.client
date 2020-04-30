@@ -64,7 +64,7 @@ const RestrictedContact = ({ user, authUserId, updateUser }) => {
     await acceptContact({
       variables: { requesterId: user.id },
       update: (cache) => {
-        updateUser({ ...user, updated: true })
+        updateUser({ ...user, updated: true });
       }
     });
   }

@@ -12,6 +12,7 @@ import SEARCH_CONTACTS from '../../queries/searchContacts';
 import SEARCH_USERS from '../../queries/searchUsers';
 import MESSAGE_SUBSCRIPTION from '../../subscriptions/messageSubscription';
 import DELETED_MESSAGE_SUBSCRIPTION from '../../subscriptions/deletedMessageSubscription';
+import ACCEPTED_CONTACT_SUBSCRIPTION from '../../subscriptions/acceptedContactSubscription';
 
 const UserListWrapper = ({ 
   authUserId, 
@@ -23,7 +24,8 @@ const UserListWrapper = ({
   contactRejectedRequestResults, 
   setSearchState, 
   search, 
-  history 
+  history,
+  setActiveUser,
 }) => {
   const { loading, error, data, subscribeToMore, refetch, client } = useQuery(GET_ACTIVE_CHATS);
   const [searchContacts, { loading: searchLoading, error: searchError, data: searchData }] = useLazyQuery(SEARCH_CONTACTS);
@@ -93,6 +95,16 @@ const UserListWrapper = ({
                   refetch();
                 }
               })
+            }
+            subscribeToAcceptedContacts={({ requesterId, receiverId }) => 
+              subscribeToMore({
+                document: ACCEPTED_CONTACT_SUBSCRIPTION,
+                variables: { requesterId, receiverId },
+                updateQuery: (prev, { subscriptionData }) => {
+                  const activeUser = JSON.parse(localStorage.getItem('active'));
+                  (activeUser.id === receiverId) && setActiveUser({ ...activeUser, updated: true });
+                }
+              }) 
             }
           />
         )

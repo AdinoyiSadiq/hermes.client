@@ -9,6 +9,7 @@ import UPDATE_MESSAGE from '../mutations/updateMessage';
 import MESSAGE_SUBSCRIPTION from '../subscriptions/messageSubscription';
 import DELETED_MESSAGE_SUBSCRIPTION from '../subscriptions/deletedMessageSubscription';
 import UPDATED_MESSAGE_SUBSCRIPTION from '../subscriptions/updatedMessageSubscription';
+import GET_ACTIVE_CHATS  from '../queries/getActiveChats';
 
 const Messaging = ({ user, authUserId, setShowContact, sendImage, uploadingImage, history }) => {
   const prevMessageSub = useRef();
@@ -39,8 +40,23 @@ const Messaging = ({ user, authUserId, setShowContact, sendImage, uploadingImage
           messageIds.push(message.id);
         }
       });
+
       if (messageIds.length) {
-          updateMessages({ variables: { state: 'delivered', messageIds: messageIds } });
+          updateMessages({ 
+            variables: { state: 'delivered', messageIds: messageIds },
+            update: (cache) => {
+              const activeUsers = cache.readQuery({ query: GET_ACTIVE_CHATS });
+              const updatedActiveUsers = activeUsers && activeUsers.getActiveUsers && 
+                                      (activeUsers.getActiveUsers).map((activeUser) => {
+                                        if (activeUser.user.id === user.id) activeUser.unreadMessages = 0;
+                                        return activeUser
+                                      });
+              cache.writeQuery({
+                query: GET_ACTIVE_CHATS, 
+                data: { getActiveUsers: [...updatedActiveUsers] }
+              });
+            },
+          });
       }
     }
   }, [messagesData])
