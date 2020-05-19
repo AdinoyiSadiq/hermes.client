@@ -89,6 +89,12 @@
         &--message {
           font-size: 1.4rem;
           color: $color-black-2;
+
+          img {
+            width: 1.5rem;
+            height: 1.5rem;
+            margin-right: .5rem;
+          }
         }
 
         &--lastseen {
