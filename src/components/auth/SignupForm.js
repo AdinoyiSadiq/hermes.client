@@ -6,7 +6,7 @@ import Button from '../buttons/Button';
 import validateAuth from '../../lib/validation';
 
 const fieldNames = ['firstname', 'lastname', 'username', 'location', 'email', 'password', 'confirmPassword'];
-
+// refacrot to use hooks
 class SignupForm extends Component {
   constructor(props) {
     super(props);
