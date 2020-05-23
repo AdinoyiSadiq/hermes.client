@@ -4,6 +4,7 @@ import ChatList from '../containers/ChatList';
 import Messaging from '../containers/Messaging';
 import ContactProfile from '../containers/ContactProfile';
 import RestrictedContact from '../containers/RestrictedContact';
+import DefaultMessage from '../containers/DefaultMessage';
 import Loader from '../components/loaders/Loader';
 import MessagingContext from '../context/Messaging';
 import imageUploader from '../lib/imageUploader';
@@ -144,7 +145,7 @@ const Home = (props) => {
                   updateUser={setIsActiveUser}
                   authUserId={authUserData && authUserData.getAuthUser && authUserData.getAuthUser.id}
                 />
-              ) : <div />
+              ) : <DefaultMessage />
             }
           </Fragment>
         )
