@@ -17,7 +17,7 @@ const FormInput = (props) => {
         autoComplete="off"
       />
       {
-        error[name] && touched[name] ? 
+        error[name] && touched ? 
         <div className="error-field">{error[name]}</div> : 
         <label htmlFor={`${name}`} className='form__label'>{placeholder}</label>
       }

@@ -16,10 +16,13 @@ const SigninForm = (props) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    signin({ variables: { 
-      email: email.toLowerCase().trim(), 
-      password 
-    }});
+    const validationError = validateAuth({ email, password }, fieldNames);
+    if (!validationError.status) {
+      signin({ variables: { 
+        email: email.toLowerCase().trim(), 
+        password 
+      }});
+    }
   }
 
   if (data && data.signin) {
@@ -37,7 +40,7 @@ const SigninForm = (props) => {
     }}>
       <FormInput
         error={validationError}
-        touched={{ email: touchedEmail }} 
+        touched={touchedEmail} 
         value={email}
         handleChange={event => setEmail(event.target.value)}
         handleBlur={() => setTouchedEmail(true)}
@@ -46,7 +49,7 @@ const SigninForm = (props) => {
       />
       <FormInput 
         error={validationError}
-        touched={{ password: touchedPassword }}
+        touched={touchedPassword}
         value={password}
         handleChange={event => setPassword(event.target.value)}
         handleBlur={() => setTouchedPassword(true)}
