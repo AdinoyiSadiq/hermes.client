@@ -5,6 +5,8 @@ import Messaging from '../containers/Messaging';
 import ContactProfile from '../containers/ContactProfile';
 import RestrictedContact from '../containers/RestrictedContact';
 import DefaultMessage from '../containers/DefaultMessage';
+import WindowPortal from '../containers/call/WindowPortal';
+import ContactCall from '../containers/call/ContactCall';
 import Loader from '../components/loaders/Loader';
 import MessagingContext from '../context/Messaging';
 import imageUploader from '../lib/imageUploader';
@@ -21,10 +23,17 @@ const Home = (props) => {
   const [isActive, setIsActive] = useState(false);
   const [showContact, setShowContact] = useState(false);
   const [isActiveUser, setIsActiveUser] = useState({});
+  const [isActiveCall, setIsActiveCall] = useState({});
   const [uploadingImage, setUploadingImage] = useState({});
   const { loading: authUserLoading, error: authUserError, data: authUserData, client } = useQuery(GET_AUTH_USER);
   const [getContactProfile, { loading: contactLoading, error: contactError, data: contactData }] = useLazyQuery(GET_CONTACT_PROFILE);
   const [createMessage, { loading, error, data }] = useMutation(CREATE_MESSAGE);
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', () => {
+      setActiveCall({});
+    });
+  }, [])
 
   useEffect(() => {
     setMessageLoading(true);
@@ -36,6 +45,10 @@ const Home = (props) => {
     setIsActiveUser({ ...user });
     localStorage.setItem('active', JSON.stringify(user));
     getContactProfile({ variables: { userId: user.id } });
+  }
+
+  const setActiveCall = (call) => {
+    setIsActiveCall(call);
   }
 
   const sendImage = async ({ variables, imageFile }) => {
@@ -125,6 +138,7 @@ const Home = (props) => {
                     sendImage={sendImage}
                     uploadingImage={uploadingImage}
                     history={props.history}
+                    setActiveCall={setActiveCall}
                   />
                   {
                     showContact && (
@@ -146,6 +160,15 @@ const Home = (props) => {
                   authUserId={authUserData && authUserData.getAuthUser && authUserData.getAuthUser.id}
                 />
               ) : <DefaultMessage />
+            }
+            { isActiveCall && isActiveCall.user && (
+              <WindowPortal closeWindow={setActiveCall}>
+                <ContactCall
+                  isActiveCall={isActiveCall}
+                  setActiveCall={setActiveCall}
+                />
+              </WindowPortal>
+            )
             }
           </Fragment>
         )

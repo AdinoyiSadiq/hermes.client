@@ -11,7 +11,7 @@ import DELETED_MESSAGE_SUBSCRIPTION from '../subscriptions/deletedMessageSubscri
 import UPDATED_MESSAGE_SUBSCRIPTION from '../subscriptions/updatedMessageSubscription';
 import GET_ACTIVE_CHATS  from '../queries/getActiveChats';
 
-const Messaging = ({ user, authUserId, setShowContact, sendImage, uploadingImage, history }) => {
+const Messaging = ({ user, authUserId, setShowContact, sendImage, uploadingImage, setActiveCall, history }) => {
   const prevMessageSub = useRef();
   const prevDeleteMessageSub = useRef();
   const prevUpdateMessageSub = useRef();
@@ -182,6 +182,7 @@ const Messaging = ({ user, authUserId, setShowContact, sendImage, uploadingImage
         authUserId={authUserId}
         setShowContact={setShowContact}
         uploadingImage={uploadingImage}
+        setActiveCall={setActiveCall}
       />
       <MessageList 
         refresh={refresh}
