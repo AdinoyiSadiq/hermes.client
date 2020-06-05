@@ -1,0 +1,12 @@
+.call-button {
+  background-color: rgba($color-orange, 0.24);
+  height: 4.8rem;
+  width: 4.8rem;
+  outline: 0;
+  border: none;
+  border-radius: 20rem;
+
+  &--active {
+    background-color: rgba($color-orange, 0.8);
+  }
+}

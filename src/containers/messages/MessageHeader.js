@@ -3,9 +3,10 @@ import { useSubscription } from "@apollo/react-hooks";
 import UserImage from '../../components/profile/UserImage';
 import formatText from '../../lib/formatText';
 import TYPING_SUBSCRIPTION from '../../subscriptions/typingSubscription';
-import search__icon__orange from '../../images/search-icon--orange.svg';
+import audio__icon from '../../images/audio-icon.svg';
+import video__icon from '../../images/video-icon.svg';
 
-const MessageHeader = ({ user, authUserId, setShowContact, uploadingImage }) => {
+const MessageHeader = ({ user, authUserId, setShowContact, uploadingImage, setActiveCall }) => {
   const [isTyping, setIsTyping] = useState({ state: false, user: false });
   useSubscription(
     TYPING_SUBSCRIPTION,
@@ -26,6 +27,10 @@ const MessageHeader = ({ user, authUserId, setShowContact, uploadingImage }) => 
     }, 3000);
   }
 
+  const startCall = (type) => {
+    setActiveCall({ user, type, direction: 'out' })
+  }
+
   return (
     <section>
       <div className='header'>
@@ -36,13 +41,25 @@ const MessageHeader = ({ user, authUserId, setShowContact, uploadingImage }) => 
             <div className='user__details--subtext'>{(isTyping.state && isTyping.user === user.id) ? 'typing...' : ''}</div>
           </div>
         </div>
-        <div className='nav-button u-hide'>
-          <img src={search__icon__orange} alt='search'/>
+        <div className='call-button__container'>
+          <div 
+            className='nav-button call-button'
+            onClick={() => startCall('audio')}
+          >
+            <img src={audio__icon} alt='search'/>
+          </div>
+          <div 
+            className='nav-button call-button'
+            onClick={() => startCall('video')}
+          >
+            <img src={video__icon} alt='search'/>
+          </div>
         </div>
       </div>
       {(uploadingImage.state && uploadingImage.receiverId === user.id) && (
         <div className="loader-bar" />
       )}
+      
     </section>
   );
 }

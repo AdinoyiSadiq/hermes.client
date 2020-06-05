@@ -39,6 +39,20 @@
         position: absolute;
       }
     }
+
+    .call-button {
+      &:hover {
+        cursor: pointer;
+      }
+
+      &__container {
+        display: flex;
+
+        div:first-of-type {
+          margin-right: 1rem;
+        }
+      }
+    }
   }
   
   .messages {

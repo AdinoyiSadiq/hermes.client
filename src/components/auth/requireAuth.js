@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-export default function (ComposedComponent, isAuthenticated) {
+export default function (ComposedComponent, isAuthenticated, isActiveCall, setActiveCall) {
   // Note: Ensure that when a user's token expires the app kicks them out
   class RequireAuth extends Component {
     componentWillMount() {
@@ -16,7 +16,13 @@ export default function (ComposedComponent, isAuthenticated) {
     }
 
     render() {
-        return <ComposedComponent {...this.props} />
+        return (
+          <ComposedComponent 
+            {...this.props} 
+            isActiveCall={isActiveCall} 
+            setActiveCall={setActiveCall}
+          />
+        );
     }
   }
 

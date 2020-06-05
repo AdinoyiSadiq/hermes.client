@@ -1,0 +1,31 @@
+.contact-call {
+  display: flex;
+  height: 90%;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  &__username {
+    margin-top: 1.5rem;
+    font-size: 1.8rem;
+    color: $color-grey-dark;
+  }
+
+  &__status {
+    margin-top: .5rem;
+    font-size: 1.5rem;
+    color: $color-grey-dark-4;
+  }
+}
+
+.contact-call-button__container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  button:nth-child(2) {
+    background-color: red;
+    margin-left: 5rem;
+    margin-right: 5rem;
+  }
+}
