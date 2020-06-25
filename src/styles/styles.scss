@@ -8,7 +8,7 @@
 @import 'base/utilities';
 
 @import 'components/button';
-@import 'components/end-call-button';
+@import 'components/action-call-button';
 @import 'components/call-button';
 @import 'components/form';
 @import 'components/profile-input';
@@ -24,6 +24,7 @@
 @import 'layout/contact-profile';
 @import 'layout/user-profile';
 @import 'layout/contact-call';
+@import 'layout/contact-call-request';
 
 @import 'pages/auth';
 @import 'pages/home';

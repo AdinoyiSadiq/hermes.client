@@ -74,7 +74,7 @@ const ChatList = ({ authUserId, history }) => {
       {
         content === 'userProfile' ?  <UserProfile history={history}/> : 
         <MessagingContext.Consumer>
-        {({ setActiveUser }) => (
+        {({ setActiveUser, setCallRequest }) => (
           <UserListWrapper 
             authUserId={authUserId}
             content={content}
@@ -87,6 +87,7 @@ const ChatList = ({ authUserId, history }) => {
             contactRejectedRequestResults={contactRejectedRequestResults}
             history={history}
             setActiveUser={setActiveUser}
+            setCallRequest={setCallRequest}
           />
         )}
         </MessagingContext.Consumer>

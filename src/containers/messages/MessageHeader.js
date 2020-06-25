@@ -28,7 +28,7 @@ const MessageHeader = ({ user, authUserId, setShowContact, uploadingImage, setAc
   }
 
   const startCall = (type) => {
-    setActiveCall({ user, type, direction: 'out' })
+    setActiveCall({ user, type, direction: 'out' });
   }
 
   return (

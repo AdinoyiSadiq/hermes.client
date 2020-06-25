@@ -12,6 +12,11 @@
     height: 4rem;
   }
 
+  &--medium img {
+    width: 10rem;
+    height: 10rem;
+  }
+
   &--big img {
     width: 16rem;
     height: 16rem;
@@ -37,6 +42,12 @@
     &-small {
       width: 4rem;
       height: 4rem;
+    }
+
+    &-medium {
+      width: 10rem;
+      height: 10rem;
+      font-size: 3rem;
     }
 
     &-big {

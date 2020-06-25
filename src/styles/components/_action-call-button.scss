@@ -1,0 +1,16 @@
+.action-call-button {
+  outline: 0;
+  border: none;
+  height: 7.2rem;
+  width: 7.2rem;
+  border-radius: 20rem;
+  cursor: pointer;
+
+  &--end {
+    background-color: $color-red-1;
+  }
+
+  &--accept {
+    background-color: $color-green;
+  }
+}

@@ -1,7 +1,7 @@
 import React from 'react';
 import UserItem from './UserItem';
 
-const UserList = ({ authUserId, type, view, data, users, subscribeToNewMessages, subscribeToDeletedMessages, subscribeToAcceptedContacts }) => {
+const UserList = ({ authUserId, type, view, data, users, subscribeToNewMessages, subscribeToDeletedMessages, subscribeToAcceptedContacts, subscribeToCallRequests }) => {
   return (
     <section className='user-list u-margin-top-1'>
       {
@@ -16,6 +16,7 @@ const UserList = ({ authUserId, type, view, data, users, subscribeToNewMessages,
                 authUserId={authUserId}
                 subscribeToNewMessages={subscribeToNewMessages}
                 subscribeToDeletedMessages={subscribeToDeletedMessages}
+                subscribeToCallRequests={subscribeToCallRequests}
                 active={true}
               />
             );

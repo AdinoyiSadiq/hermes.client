@@ -7,7 +7,7 @@ class Button extends Component {
     const { disabled, buttonClick } = this.props;
     return (
       <button 
-        className='end-call-button'
+        className='action-call-button action-call-button--end'
         disabled={disabled}
         onClick={buttonClick}
       >

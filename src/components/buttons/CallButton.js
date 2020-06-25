@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 
 class Button extends Component {
   render() {
-    const { image, disabled, buttonClick } = this.props;
+    const { image, buttonStatus, disabled, buttonClick } = this.props;
     return (
       <button 
-        className={`call-button ${disabled && 'call-button--active'}`}
+        className={`call-button ${buttonStatus && 'call-button--active'} ${disabled && 'call-button--disabled'}`}
         onClick={buttonClick}
+        disabled={disabled}
       >
         <img src={image} alt='end call' />
       </button>

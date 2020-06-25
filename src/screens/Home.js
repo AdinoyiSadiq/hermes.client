@@ -5,8 +5,9 @@ import Messaging from '../containers/Messaging';
 import ContactProfile from '../containers/ContactProfile';
 import RestrictedContact from '../containers/RestrictedContact';
 import DefaultMessage from '../containers/DefaultMessage';
-import WindowPortal from '../containers/call/WindowPortal';
+// import WindowPortal from '../containers/call/WindowPortal';
 import ContactCall from '../containers/call/ContactCall';
+import ContactCallRequest from '../containers/call/ContactCallRequest';
 import Loader from '../components/loaders/Loader';
 import MessagingContext from '../context/Messaging';
 import imageUploader from '../lib/imageUploader';
@@ -24,6 +25,7 @@ const Home = (props) => {
   const [showContact, setShowContact] = useState(false);
   const [isActiveUser, setIsActiveUser] = useState({});
   const [isActiveCall, setIsActiveCall] = useState({});
+  const [isCallRequest, setIsCallRequest] = useState({});
   const [uploadingImage, setUploadingImage] = useState({});
   const { loading: authUserLoading, error: authUserError, data: authUserData, client } = useQuery(GET_AUTH_USER);
   const [getContactProfile, { loading: contactLoading, error: contactError, data: contactData }] = useLazyQuery(GET_CONTACT_PROFILE);
@@ -49,6 +51,12 @@ const Home = (props) => {
 
   const setActiveCall = (call) => {
     setIsActiveCall(call);
+  }
+
+  const setCallRequest = (callRequest) => {
+    if (!isActiveCall.user) {
+      setIsCallRequest(callRequest);
+    }
   }
 
   const sendImage = async ({ variables, imageFile }) => {
@@ -118,7 +126,7 @@ const Home = (props) => {
           </div>
         ) : (
           <Fragment>
-            <MessagingContext.Provider value={{ setActiveUser, isActiveUser }}>
+            <MessagingContext.Provider value={{ setActiveUser, isActiveUser, setCallRequest }}>
               <ChatList 
                 authUserId={authUserData && authUserData.getAuthUser && authUserData.getAuthUser.id}
                 history={props.history}
@@ -161,17 +169,25 @@ const Home = (props) => {
                 />
               ) : <DefaultMessage />
             }
-            { isActiveCall && isActiveCall.user && (
-              <WindowPortal closeWindow={setActiveCall}>
-                <ContactCall
-                  isActiveCall={isActiveCall}
-                  setActiveCall={setActiveCall}
-                />
-              </WindowPortal>
-            )
-            }
           </Fragment>
         )
+      }
+      { 
+        isCallRequest && isCallRequest.user ? (
+          <ContactCallRequest 
+            callRequest={isCallRequest}
+            setCallRequest={setCallRequest}
+            setActiveCall={setActiveCall}
+          />
+        ) : isActiveCall && isActiveCall.user ? (
+          <div className='call-modal'>              
+            <ContactCall
+              isActiveCall={isActiveCall}
+              setActiveCall={setActiveCall}
+              authUserId={authUserData && authUserData.getAuthUser && authUserData.getAuthUser.id}
+            />
+          </div>
+        ) : <div />
       }
     </div>
   );

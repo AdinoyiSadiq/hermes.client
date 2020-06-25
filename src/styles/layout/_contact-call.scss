@@ -24,8 +24,42 @@
   align-items: center;
 
   button:nth-child(2) {
-    background-color: red;
     margin-left: 5rem;
     margin-right: 5rem;
   }
 }
+
+.video-call {
+  height: 100%;
+
+  &__main {
+    position: relative;
+    min-width: 100%; 
+    min-height: 100%; 
+    width: auto;
+    height: auto;
+    margin: 0;
+    background-color: $color-black;
+  }
+
+  &__sub {
+    height: 30%;
+    margin: 0;
+    background-color: rgba($color-black, 0.1);
+    transform: translate(-10%, -10%);
+  }
+  
+
+  & > div {
+    position: absolute;
+    top: 90%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  & > video:nth-of-type(2) {
+    position: absolute;
+    top: 70%;
+    left: 80%;
+  }
+} 

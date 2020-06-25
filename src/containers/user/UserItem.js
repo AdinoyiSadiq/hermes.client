@@ -14,6 +14,7 @@ const UserItem = ({
     subscribeToNewMessages, 
     subscribeToDeletedMessages,
     subscribeToAcceptedContacts,
+    subscribeToCallRequests,
     active
   }) => {
   useEffect(() => {
@@ -21,6 +22,8 @@ const UserItem = ({
     subscribeToNewMessages({ senderId: user.id, receiverId: authUserId });
     subscribeToDeletedMessages && 
     subscribeToDeletedMessages({ senderId: user.id, receiverId: authUserId });
+    subscribeToCallRequests &&
+    subscribeToCallRequests({ senderId: user.id, receiverId: authUserId })
     !contact && 
     (actionUserId === authUserId) && 
     subscribeToAcceptedContacts && subscribeToAcceptedContacts({ requesterId: actionUserId, receiverId: user.id });

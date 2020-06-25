@@ -13,6 +13,7 @@ import SEARCH_USERS from '../../queries/searchUsers';
 import MESSAGE_SUBSCRIPTION from '../../subscriptions/messageSubscription';
 import DELETED_MESSAGE_SUBSCRIPTION from '../../subscriptions/deletedMessageSubscription';
 import ACCEPTED_CONTACT_SUBSCRIPTION from '../../subscriptions/acceptedContactSubscription';
+import REQUEST_CALL_SUBSCRIPTION from '../../subscriptions/requestCallSubscription';
 
 const UserListWrapper = ({ 
   authUserId, 
@@ -26,6 +27,7 @@ const UserListWrapper = ({
   search, 
   history,
   setActiveUser,
+  setCallRequest
 }) => {
   const { loading, error, data, subscribeToMore, refetch, client } = useQuery(GET_ACTIVE_CHATS);
   const [searchContacts, { loading: searchLoading, error: searchError, data: searchData }] = useLazyQuery(SEARCH_CONTACTS);
@@ -105,6 +107,24 @@ const UserListWrapper = ({
                   (activeUser.id === receiverId) && setActiveUser({ ...activeUser, updated: true });
                 }
               }) 
+            }
+            subscribeToCallRequests={({ senderId, receiverId }) => {
+              subscribeToMore({
+                document: REQUEST_CALL_SUBSCRIPTION,
+                variables: { senderId, receiverId },
+                updateQuery: (prev, { subscriptionData }) => {
+                  if (subscriptionData && subscriptionData.data && subscriptionData.data.requestCall) {
+                    const { iceCandidate, offer, sender, type } = subscriptionData.data.requestCall;
+                    setCallRequest({
+                      user: sender,
+                      iceCandidate,
+                      offer,
+                      type
+                    });
+                  }
+                }
+              })
+            }
             }
           />
         )
